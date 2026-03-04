@@ -1,0 +1,232 @@
+{
+  "projectType": "general",
+  "projectName": "30 Seconds of Code",
+  "projectDescription": "A curated collection of code snippets and articles covering JavaScript, React, CSS, Python, Git, HTML and web development concepts.",
+  "theme": "mint",
+  "primaryColor": "#040404",
+  "lightColor": null,
+  "darkColor": null,
+  "navigation": {
+    "tabs": [
+      {
+        "tab": "Documentation",
+        "groups": [
+          {
+            "group": "Get Started",
+            "pages": [
+              "introduction",
+              "contributing",
+              "content-guidelines"
+            ]
+          },
+          {
+            "group": "Browse Snippets",
+            "pages": [
+              "snippets/overview"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "JavaScript",
+        "groups": [
+          {
+            "group": "Overview",
+            "pages": [
+              "javascript/introduction"
+            ]
+          },
+          {
+            "group": "Arrays",
+            "pages": [
+              "javascript/arrays/overview",
+              "javascript/arrays/initialization",
+              "javascript/arrays/methods"
+            ]
+          },
+          {
+            "group": "Objects & Functions",
+            "pages": [
+              "javascript/objects/overview",
+              "javascript/functions/overview",
+              "javascript/functions/arrow-functions"
+            ]
+          },
+          {
+            "group": "Async & Promises",
+            "pages": [
+              "javascript/async/promises",
+              "javascript/async/http-requests"
+            ]
+          },
+          {
+            "group": "DOM & Browser",
+            "pages": [
+              "javascript/dom/manipulation",
+              "javascript/dom/querying",
+              "javascript/dom/events"
+            ]
+          },
+          {
+            "group": "Advanced Topics",
+            "pages": [
+              "javascript/advanced/algorithms",
+              "javascript/advanced/data-structures",
+              "javascript/advanced/generators",
+              "javascript/advanced/regexp"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "React",
+        "groups": [
+          {
+            "group": "Overview",
+            "pages": [
+              "react/introduction"
+            ]
+          },
+          {
+            "group": "Hooks",
+            "pages": [
+              "react/hooks/overview",
+              "react/hooks/examples"
+            ]
+          },
+          {
+            "group": "Components",
+            "pages": [
+              "react/components/overview",
+              "react/components/examples"
+            ]
+          },
+          {
+            "group": "Testing",
+            "pages": [
+              "react/testing/overview"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "CSS",
+        "groups": [
+          {
+            "group": "Overview",
+            "pages": [
+              "css/introduction"
+            ]
+          },
+          {
+            "group": "Layout",
+            "pages": [
+              "css/layout/overview",
+              "css/layout/examples"
+            ]
+          },
+          {
+            "group": "Visual & Styling",
+            "pages": [
+              "css/visual/overview",
+              "css/visual/examples"
+            ]
+          },
+          {
+            "group": "Animation & Interactivity",
+            "pages": [
+              "css/animation/overview",
+              "css/animation/hover-effects"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "Python",
+        "groups": [
+          {
+            "group": "Overview",
+            "pages": [
+              "python/introduction"
+            ]
+          },
+          {
+            "group": "Data Structures",
+            "pages": [
+              "python/lists/overview",
+              "python/dictionaries/overview"
+            ]
+          },
+          {
+            "group": "Common Operations",
+            "pages": [
+              "python/strings/overview",
+              "python/math/overview",
+              "python/dates/overview"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "Git",
+        "groups": [
+          {
+            "group": "Overview",
+            "pages": [
+              "git/introduction"
+            ]
+          },
+          {
+            "group": "Configuration",
+            "pages": [
+              "git/configuration/overview",
+              "git/configuration/aliases"
+            ]
+          },
+          {
+            "group": "Workflow",
+            "pages": [
+              "git/branches/overview",
+              "git/commits/overview",
+              "git/repository/overview"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "HTML & Web Dev",
+        "groups": [
+          {
+            "group": "HTML Basics",
+            "pages": [
+              "html/introduction",
+              "html/head-basics"
+            ]
+          },
+          {
+            "group": "Articles",
+            "pages": [
+              "articles/overview",
+              "articles/best-practices"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "keyFeatures": [
+    "600+ code snippets across JavaScript, React, CSS, Python, Git, and HTML",
+    "Educational articles covering development best practices and techniques",
+    "Curated collections organized by topic and use case",
+    "Real-world code examples with explanations",
+    "Built with Astro for optimal performance"
+  ],
+  "publicApiSurface": [
+    "JavaScript snippets: Arrays, Objects, Functions, DOM manipulation, Async operations",
+    "React snippets: Custom hooks (useFetch, useState patterns), Component patterns, Testing utilities",
+    "CSS snippets: Layout patterns, Animations, Hover effects, Visual effects",
+    "Python snippets: List operations, Dictionary utilities, String manipulation, Math functions",
+    "Git snippets: Configuration, Branch management, Commit operations, Repository workflows",
+    "HTML snippets: Accessibility tips, Head element basics, Best practices"
+  ]
+}
