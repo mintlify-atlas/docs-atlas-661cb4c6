@@ -1,97 +1,262 @@
 ---
-title: "Introduction"
-description: "Welcome to the new home for your documentation"
+title: "30 Seconds of Code"
+description: "Level up your coding skills with curated snippets and articles covering JavaScript, React, CSS, Python, Git, and web development"
+mode: "custom"
 ---
 
-## Setting up
+<div className="relative overflow-hidden bg-gradient-to-br from-[#0a0c1f] via-[#0a0b1a] to-[#040404] dark:from-[#0a0c1f] dark:via-[#0a0b1a] dark:to-[#040404] py-20 lg:py-24">
+  <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PHBhdHRlcm4gaWQ9ImdyaWQiIHdpZHRoPSI2MCIgaGVpZ2h0PSI2MCIgcGF0dGVyblVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHBhdGggZD0iTSAxMCAwIEwgMCAwIDAgMTAiIGZpbGw9Im5vbmUiIHN0cm9rZT0icmdiYSgyNTUsMjU1LDI1NSwwLjAzKSIgc3Ryb2tlLXdpZHRoPSIxIi8+PC9wYXR0ZXJuPjwvZGVmcz48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSJ1cmwoI2dyaWQpIi8+PC9zdmc+')] opacity-40"></div>
+  
+  <div className="relative max-w-7xl mx-auto px-6 lg:px-8">
+    <div className="text-center">
+      <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white mb-6 tracking-tight">
+        Master coding in
+        <span className="block text-transparent bg-clip-text bg-gradient-to-r from-[#5a5f8d] to-[#8b90c2] mt-2">
+          30 seconds or less
+        </span>
+      </h1>
+      
+      <p className="mt-6 text-base sm:text-lg lg:text-xl text-gray-300 dark:text-gray-300 max-w-3xl mx-auto leading-relaxed">
+        Browse 600+ curated code snippets and articles covering JavaScript, React, CSS, Python, Git, and web development. Learn practical techniques with real-world examples.
+      </p>
+      
+      <div className="mt-10 flex flex-wrap items-center justify-center gap-4">
+        <a 
+          href="/introduction" 
+          className="inline-flex items-center px-8 py-3.5 text-base font-semibold rounded-lg bg-[#040404] text-white hover:bg-[#1a1a1a] transition-colors shadow-lg hover:shadow-xl border border-white/10"
+        >
+          Get Started
+          <svg className="ml-2 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+          </svg>
+        </a>
+        
+        <a 
+          href="/snippets/overview" 
+          className="inline-flex items-center px-8 py-3.5 text-base font-semibold rounded-lg bg-white/10 text-white hover:bg-white/20 transition-colors border border-white/30"
+        >
+          Browse Snippets
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
 
-Get your documentation site up and running in minutes.
+<div className="mt-16 mb-16 max-w-5xl mx-auto px-6">
+  <div className="text-center mb-12">
+    <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-4">
+      Quick navigation
+    </h2>
+    <p className="text-base text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
+      Jump directly to the language or technology you want to explore
+    </p>
+  </div>
 
-<Card
-  title="Start here"
-  icon="rocket"
-  href="/quickstart"
-  horizontal
->
-  Follow our three step quickstart guide.
-</Card>
+  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <a href="/javascript/introduction" className="group block rounded-2xl border border-gray-200 dark:border-[#27272a] overflow-hidden no-underline hover:border-[#5a5f8d] dark:hover:border-[#5a5f8d] transition-colors bg-white dark:bg-[#1a1d27]">
+      <div className="p-6">
+        <div className="flex items-center gap-3 mb-3">
+          <div className="w-10 h-10 rounded-lg bg-yellow-500/10 dark:bg-yellow-500/10 flex items-center justify-center">
+            <span className="text-2xl">⚡</span>
+          </div>
+          <h3 className="text-base font-semibold text-gray-900 dark:text-white">JavaScript</h3>
+        </div>
+        <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">
+          460+ ES6 snippets covering arrays, objects, DOM manipulation, and Node.js utilities
+        </p>
+        <div className="flex items-center text-sm text-[#5a5f8d] dark:text-[#8b90c2] group-hover:text-[#040404] dark:group-hover:text-white transition-colors">
+          Explore JavaScript
+          <svg className="ml-1 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+          </svg>
+        </div>
+      </div>
+    </a>
 
-## Make it yours
+    <a href="/react/introduction" className="group block rounded-2xl border border-gray-200 dark:border-[#27272a] overflow-hidden no-underline hover:border-[#5a5f8d] dark:hover:border-[#5a5f8d] transition-colors bg-white dark:bg-[#1a1d27]">
+      <div className="p-6">
+        <div className="flex items-center gap-3 mb-3">
+          <div className="w-10 h-10 rounded-lg bg-blue-500/10 dark:bg-blue-500/10 flex items-center justify-center">
+            <span className="text-2xl">⚛️</span>
+          </div>
+          <h3 className="text-base font-semibold text-gray-900 dark:text-white">React</h3>
+        </div>
+        <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">
+          Custom hooks, component patterns, and testing utilities for modern React development
+        </p>
+        <div className="flex items-center text-sm text-[#5a5f8d] dark:text-[#8b90c2] group-hover:text-[#040404] dark:group-hover:text-white transition-colors">
+          Explore React
+          <svg className="ml-1 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+          </svg>
+        </div>
+      </div>
+    </a>
 
-Design a docs site that looks great and empowers your users.
+    <a href="/css/introduction" className="group block rounded-2xl border border-gray-200 dark:border-[#27272a] overflow-hidden no-underline hover:border-[#5a5f8d] dark:hover:border-[#5a5f8d] transition-colors bg-white dark:bg-[#1a1d27]">
+      <div className="p-6">
+        <div className="flex items-center gap-3 mb-3">
+          <div className="w-10 h-10 rounded-lg bg-pink-500/10 dark:bg-pink-500/10 flex items-center justify-center">
+            <span className="text-2xl">🎨</span>
+          </div>
+          <h3 className="text-base font-semibold text-gray-900 dark:text-white">CSS</h3>
+        </div>
+        <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">
+          Layout techniques, animations, hover effects, and visual styling patterns
+        </p>
+        <div className="flex items-center text-sm text-[#5a5f8d] dark:text-[#8b90c2] group-hover:text-[#040404] dark:group-hover:text-white transition-colors">
+          Explore CSS
+          <svg className="ml-1 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+          </svg>
+        </div>
+      </div>
+    </a>
 
-<Columns cols={2}>
-  <Card
-    title="Edit locally"
-    icon="pen-to-square"
-    href="/development"
-  >
-    Edit your docs locally and preview them in real time.
-  </Card>
-  <Card
-    title="Customize your site"
-    icon="palette"
-    href="/essentials/settings"
-  >
-    Customize the design and colors of your site to match your brand.
-  </Card>
-    <Card
-    title="Set up navigation"
-    icon="map"
-    href="/essentials/navigation"
-  >
-    Organize your docs to help users find what they need and succeed with your product.
-  </Card>
-  <Card
-    title="API documentation"
-    icon="terminal"
-    href="/api-reference/introduction"
-  >
-    Auto-generate API documentation from OpenAPI specifications.
-  </Card>
-</Columns>
+    <a href="/python/introduction" className="group block rounded-2xl border border-gray-200 dark:border-[#27272a] overflow-hidden no-underline hover:border-[#5a5f8d] dark:hover:border-[#5a5f8d] transition-colors bg-white dark:bg-[#1a1d27]">
+      <div className="p-6">
+        <div className="flex items-center gap-3 mb-3">
+          <div className="w-10 h-10 rounded-lg bg-green-500/10 dark:bg-green-500/10 flex items-center justify-center">
+            <span className="text-2xl">🐍</span>
+          </div>
+          <h3 className="text-base font-semibold text-gray-900 dark:text-white">Python</h3>
+        </div>
+        <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">
+          List operations, dictionary utilities, string manipulation, and math functions
+        </p>
+        <div className="flex items-center text-sm text-[#5a5f8d] dark:text-[#8b90c2] group-hover:text-[#040404] dark:group-hover:text-white transition-colors">
+          Explore Python
+          <svg className="ml-1 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+          </svg>
+        </div>
+      </div>
+    </a>
 
-## Create beautiful pages
+    <a href="/git/introduction" className="group block rounded-2xl border border-gray-200 dark:border-[#27272a] overflow-hidden no-underline hover:border-[#5a5f8d] dark:hover:border-[#5a5f8d] transition-colors bg-white dark:bg-[#1a1d27]">
+      <div className="p-6">
+        <div className="flex items-center gap-3 mb-3">
+          <div className="w-10 h-10 rounded-lg bg-orange-500/10 dark:bg-orange-500/10 flex items-center justify-center">
+            <span className="text-2xl">🔧</span>
+          </div>
+          <h3 className="text-base font-semibold text-gray-900 dark:text-white">Git</h3>
+        </div>
+        <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">
+          Configuration tips, branch management, commit workflows, and repository operations
+        </p>
+        <div className="flex items-center text-sm text-[#5a5f8d] dark:text-[#8b90c2] group-hover:text-[#040404] dark:group-hover:text-white transition-colors">
+          Explore Git
+          <svg className="ml-1 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+          </svg>
+        </div>
+      </div>
+    </a>
 
-Everything you need to create world-class documentation.
+    <a href="/html/introduction" className="group block rounded-2xl border border-gray-200 dark:border-[#27272a] overflow-hidden no-underline hover:border-[#5a5f8d] dark:hover:border-[#5a5f8d] transition-colors bg-white dark:bg-[#1a1d27]">
+      <div className="p-6">
+        <div className="flex items-center gap-3 mb-3">
+          <div className="w-10 h-10 rounded-lg bg-red-500/10 dark:bg-red-500/10 flex items-center justify-center">
+            <span className="text-2xl">📄</span>
+          </div>
+          <h3 className="text-base font-semibold text-gray-900 dark:text-white">HTML & Web Dev</h3>
+        </div>
+        <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">
+          HTML fundamentals, accessibility tips, and web development best practices
+        </p>
+        <div className="flex items-center text-sm text-[#5a5f8d] dark:text-[#8b90c2] group-hover:text-[#040404] dark:group-hover:text-white transition-colors">
+          Explore HTML
+          <svg className="ml-1 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+          </svg>
+        </div>
+      </div>
+    </a>
+  </div>
+</div>
 
-<Columns cols={2}>
-  <Card
-    title="Write with MDX"
-    icon="pen-fancy"
-    href="/essentials/markdown"
-  >
-    Use MDX to style your docs pages.
-  </Card>
-  <Card
-    title="Code samples"
-    icon="code"
-    href="/essentials/code"
-  >
-    Add sample code to demonstrate how to use your product.
-  </Card>
-  <Card
-    title="Images"
-    icon="image"
-    href="/essentials/images"
-  >
-    Display images and other media.
-  </Card>
-  <Card
-    title="Reusable snippets"
-    icon="recycle"
-    href="/essentials/reusable-snippets"
-  >
-    Write once and reuse across your docs.
-  </Card>
-</Columns>
+<div className="mt-16 mb-16 max-w-5xl mx-auto px-6">
+  <div className="text-center mb-12">
+    <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-4">
+      Why 30 Seconds of Code?
+    </h2>
+    <p className="text-base text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
+      Everything you need to level up your development skills
+    </p>
+  </div>
 
-## Need inspiration?
+  <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+    <div className="p-6 rounded-2xl border border-gray-200 dark:border-[#27272a] bg-white dark:bg-[#1a1d27]">
+      <div className="w-12 h-12 rounded-lg bg-[#5a5f8d]/10 dark:bg-[#5a5f8d]/10 flex items-center justify-center mb-4">
+        <span className="text-2xl">🚀</span>
+      </div>
+      <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+        Quick to learn
+      </h3>
+      <p className="text-sm text-gray-600 dark:text-gray-400">
+        Every snippet is designed to be understood in 30 seconds or less, with clear explanations and real-world examples.
+      </p>
+    </div>
 
-<Card
-  title="See complete examples"
-  icon="stars"
-  href="https://mintlify.com/customers"
->
-  Browse our showcase of exceptional documentation sites.
-</Card>
+    <div className="p-6 rounded-2xl border border-gray-200 dark:border-[#27272a] bg-white dark:bg-[#1a1d27]">
+      <div className="w-12 h-12 rounded-lg bg-[#5a5f8d]/10 dark:bg-[#5a5f8d]/10 flex items-center justify-center mb-4">
+        <span className="text-2xl">✅</span>
+      </div>
+      <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+        Production-ready
+      </h3>
+      <p className="text-sm text-gray-600 dark:text-gray-400">
+        All code snippets are tested, optimized, and ready to use in your projects. Copy, paste, and ship with confidence.
+      </p>
+    </div>
+
+    <div className="p-6 rounded-2xl border border-gray-200 dark:border-[#27272a] bg-white dark:bg-[#1a1d27]">
+      <div className="w-12 h-12 rounded-lg bg-[#5a5f8d]/10 dark:bg-[#5a5f8d]/10 flex items-center justify-center mb-4">
+        <span className="text-2xl">📚</span>
+      </div>
+      <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+        Comprehensive coverage
+      </h3>
+      <p className="text-sm text-gray-600 dark:text-gray-400">
+        600+ snippets across JavaScript, React, CSS, Python, Git, and HTML. Find solutions for any development challenge.
+      </p>
+    </div>
+
+    <div className="p-6 rounded-2xl border border-gray-200 dark:border-[#27272a] bg-white dark:bg-[#1a1d27]">
+      <div className="w-12 h-12 rounded-lg bg-[#5a5f8d]/10 dark:bg-[#5a5f8d]/10 flex items-center justify-center mb-4">
+        <span className="text-2xl">🎯</span>
+      </div>
+      <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+        Curated by experts
+      </h3>
+      <p className="text-sm text-gray-600 dark:text-gray-400">
+        Every snippet follows best practices and modern standards. Learn from battle-tested solutions used by thousands of developers.
+      </p>
+    </div>
+  </div>
+</div>
+
+<div className="mt-20 mb-16 max-w-5xl mx-auto px-6">
+  <div className="rounded-2xl bg-gradient-to-br from-[#0a0c1f] to-[#1a1d27] dark:from-[#0a0c1f] dark:to-[#1a1d27] p-8 lg:p-12 text-center border border-white/10">
+    <h2 className="text-2xl sm:text-3xl font-bold text-white mb-4">
+      Ready to level up your coding skills?
+    </h2>
+    <p className="text-base text-gray-300 dark:text-gray-300 max-w-2xl mx-auto mb-8">
+      Start exploring our collection of curated snippets and articles. Master new techniques in just 30 seconds.
+    </p>
+    <div className="flex flex-wrap items-center justify-center gap-4">
+      <a 
+        href="/introduction" 
+        className="inline-flex items-center px-8 py-3.5 text-base font-semibold rounded-lg bg-white text-[#0a0c1f] hover:bg-gray-100 transition-colors"
+      >
+        Get Started
+      </a>
+      <a 
+        href="https://github.com/Chalarangelo/30-seconds-of-code" 
+        className="inline-flex items-center px-8 py-3.5 text-base font-semibold rounded-lg bg-white/10 text-white hover:bg-white/20 transition-colors border border-white/30"
+      >
+        View on GitHub
+      </a>
+    </div>
+  </div>
+</div>

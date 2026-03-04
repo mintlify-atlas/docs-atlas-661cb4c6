@@ -1,0 +1,109 @@
+---
+title: Git Documentation
+description: A comprehensive collection of Git commands, tips, and workflows for version control
+---
+
+# Git Documentation
+
+Welcome to the Git documentation collection. This guide provides simplified Git documentation and practical tips, covering the most commonly-used commands and various use-cases.
+
+## What is Git?
+
+Git is a distributed version control system that helps you track changes in your code, collaborate with others, and manage your project's history. It's the foundation of modern software development workflows.
+
+## Key Concepts
+
+### Repository
+
+A Git repository is a container for your project that tracks all changes, branches, and history. You can initialize a new repository with a single command:
+
+```bash
+cd ~/my_project
+git init
+# Initializes a repo in ~/my_project
+```
+
+### Commits
+
+Commits are the building blocks of version control in Git. Each commit represents a unit of work that includes changes to files, a commit message, and metadata like the author and timestamp.
+
+```bash
+git add .
+git commit -m "Fix the network bug"
+# Creates a commit with the message "Fix the network bug"
+```
+
+### Branches
+
+Branches allow you to develop features, fix bugs, and experiment with new ideas in isolation. You can easily create and switch between branches:
+
+```bash
+git checkout -b patch-1
+# Creates a new branch named 'patch-1' and switches to it
+
+git checkout master
+# Switches back to the master branch
+```
+
+### Remote Repositories
+
+Remote repositories enable collaboration by allowing you to push and pull changes with others:
+
+```bash
+git clone https://github.com/30-seconds/30-seconds-of-code.git
+# Clones the repository to your local machine
+
+git push
+# Pushes your local changes to the remote repository
+
+git pull
+# Pulls the latest changes from the remote repository
+```
+
+## Getting Started
+
+Before you start using Git, configure your user information:
+
+```bash
+# Configure global Git user
+git config --global user.email "cool.duck@qua.ck"
+git config --global user.name "Duck Quackers"
+```
+
+## Documentation Structure
+
+This documentation is organized into several sections:
+
+- **Configuration**: Learn how to customize Git settings and create aliases
+- **Branches**: Master branch creation, switching, merging, and deletion
+- **Commits**: Understand how to create, modify, and manage commits
+- **Repository**: Explore repository initialization, cloning, and remote operations
+
+## Basic Workflow
+
+Here's a typical Git workflow:
+
+```bash
+# 1. Check current status
+git status
+
+# 2. Stage files for commit
+git add .
+
+# 3. Create a commit
+git commit -m "Add new feature"
+
+# 4. Push to remote
+git push
+```
+
+## Getting Help
+
+For detailed information about any Git command, use:
+
+```bash
+git help <command>
+# Example: git help commit
+```
+
+Explore the sections in this documentation to learn more about specific Git operations and workflows.

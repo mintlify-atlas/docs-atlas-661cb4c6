@@ -1,0 +1,157 @@
+---
+title: Python List Operations
+description: Utilities for working with Python lists including chunking, filtering, sorting, and transformations
+---
+
+# Python List Operations
+
+Python lists are versatile data structures. This collection provides utilities for common list operations that you'll use in everyday programming.
+
+## Split List into Chunks
+
+Divide a list into smaller chunks of a specified size:
+
+```python
+from math import ceil
+
+def chunk(lst, size):
+  return list(
+    map(lambda x: lst[x * size:x * size + size],
+      list(range(ceil(len(lst) / size)))))
+
+chunk([1, 2, 3, 4, 5], 2) # [[1, 2], [3, 4], [5]]
+```
+
+Or split into a specific number of chunks:
+
+```python
+from math import ceil
+
+def chunk_into_n(lst, n):
+  size = ceil(len(lst) / n)
+  return list(
+    map(lambda x: lst[x * size:x * size + size],
+    list(range(n)))
+  )
+
+chunk_into_n([1, 2, 3, 4, 5, 6, 7], 4) # [[1, 2], [3, 4], [5, 6], [7]]
+```
+
+## Get First and Last Elements
+
+### Head of a list
+
+Get the first element safely:
+
+```python
+def first(lst):
+  return lst[0] if lst else None
+
+first([1, 2, 3]) # 1
+first([]) # None
+```
+
+### Last element
+
+Get the last element safely:
+
+```python
+def last(lst):
+  return lst[-1] if lst else None
+
+last([1, 2, 3]) # 3
+last([]) # None
+```
+
+### Initial elements
+
+Get all elements except the last:
+
+```python
+def initial(lst):
+  return lst[:-1]
+
+initial([1, 2, 3]) # [1, 2]
+initial([]) # []
+```
+
+### Tail of a list
+
+Get all elements except the first:
+
+```python
+def tail(lst):
+  return lst[1:]
+
+tail([1, 2, 3]) # [2, 3]
+tail([1]) # []
+tail([]) # []
+```
+
+## Filter Unique Values
+
+Filter duplicate values from a list:
+
+```python
+from collections import Counter
+
+def filter_unique(lst):
+  return [item for item, count in Counter(lst).items() if count > 1]
+
+filter_unique([1, 2, 2, 3, 4, 4, 5]) # [2, 4]
+```
+
+Or get only unique values:
+
+```python
+from collections import Counter
+
+def filter_non_unique(lst):
+  return [item for item, count in Counter(lst).items() if count == 1]
+
+filter_non_unique([1, 2, 2, 3, 4, 4, 5]) # [1, 3, 5]
+```
+
+## Practical Use Cases
+
+### Pagination
+
+Use `chunk()` to paginate data:
+
+```python
+users = ['Alice', 'Bob', 'Charlie', 'David', 'Eve', 'Frank']
+page_size = 2
+pages = chunk(users, page_size)
+# [['Alice', 'Bob'], ['Charlie', 'David'], ['Eve', 'Frank']]
+```
+
+### Safe Access
+
+Use `first()` and `last()` to avoid index errors:
+
+```python
+results = search_database(query)
+top_result = first(results)  # Returns None if no results
+```
+
+### Data Cleaning
+
+Remove duplicates while preserving order:
+
+```python
+from collections import Counter
+
+data = [1, 2, 2, 3, 1, 4]
+cleaned = filter_non_unique(data)  # [3, 4]
+```
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Dictionaries" icon="book" href="/python/dictionaries/overview">
+    Learn about dictionary operations
+  </Card>
+  <Card title="Strings" icon="text" href="/python/strings/overview">
+    Explore string manipulation utilities
+  </Card>
+</CardGroup>

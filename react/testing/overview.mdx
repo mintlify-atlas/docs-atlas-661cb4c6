@@ -1,0 +1,379 @@
+---
+title: React Testing Overview
+description: Patterns and best practices for testing React components
+---
+
+Testing React components ensures they work correctly and prevents regressions. This guide covers common testing patterns using React Testing Library and Jest.
+
+## Testing Philosophy
+
+<CardGroup cols={2}>
+  <Card title="Test User Behavior" icon="user">
+    Test components the way users interact with them, not implementation details.
+  </Card>
+  
+  <Card title="Avoid Testing Internals" icon="box-open">
+    Don't test state variables or internal functions directly. Test the output.
+  </Card>
+  
+  <Card title="Use Real DOM" icon="window">
+    React Testing Library uses real DOM nodes for more realistic tests.
+  </Card>
+  
+  <Card title="Accessibility First" icon="universal-access">
+    Query elements by accessible attributes like labels and roles.
+  </Card>
+</CardGroup>
+
+## Common Testing Patterns
+
+### Testing Asynchronous Updates
+
+Many React components update asynchronously, especially when using libraries like React DnD or data fetching hooks. Here's how to handle async updates:
+
+<Accordion title="The act(...) Warning">
+  If you see warnings about wrapping tests in `act(...)`, it usually means:
+  
+  - The component updated after the test completed
+  - There are pending async updates
+  - You need to wait for updates to finish
+  
+  The solution is to use `waitFor()` from React Testing Library.
+</Accordion>
+
+### Example: Testing a Drag and Drop Component
+
+Here's a real example of testing a component that updates asynchronously:
+
+```jsx
+import React from 'react';
+import { useDrag } from 'react-dnd';
+
+const Card = ({
+  card: {
+    id,
+    title
+  }
+}) => {
+  const [style, drag] = useDrag({
+    item: { id, type: 'card' },
+    collect: monitor => ({
+      opacity: monitor.isDragging() ? 0 : 1
+    })
+  });
+
+  return (
+    <li className="card" id={id} ref={drag} style={style}>
+      {title}
+    </li>
+  );
+};
+```
+
+<Tabs>
+  <Tab title="Problematic Test">
+    ```jsx
+    import React from 'react';
+    import { fireEvent } from '@testing-library/react';
+    import Card from './components/Card';
+    import renderDndConnected from './test_utils/renderDndConnected';
+
+    describe('<Card/>', () => {
+      let card;
+
+      beforeEach(() => {
+        const utils = renderDndConnected(
+          <Card card={{ id: '1', title: 'Card' }} />
+        );
+        card = utils.container.querySelector('.card');
+      });
+
+      it('initial opacity is 1', () => {
+        expect(card.style.opacity).toEqual('1');
+      });
+
+      describe('when drag starts', () => {
+        beforeEach(() => {
+          fireEvent.dragStart(card);
+        });
+
+        // This test fails with act(...) warning
+        it('opacity is 0', () => {
+          expect(card.style.opacity).toEqual('0');
+        });
+      });
+    });
+    ```
+    
+    This test fails because the `dragStart` event doesn't immediately update the component's style. The `collect` function takes time to run.
+  </Tab>
+  
+  <Tab title="Fixed Test">
+    ```jsx
+    import React from 'react';
+    import { fireEvent, waitFor } from '@testing-library/react';
+    import renderDndConnected from './test_utils/renderDndConnected';
+    import Card from './components/Card';
+
+    describe('<Card/>', () => {
+      let card;
+
+      beforeEach(() => {
+        const utils = renderDndConnected(
+          <Card card={{ id: '1', title: 'Card' }} />
+        );
+        card = utils.container.querySelector('.card');
+      });
+
+      it('initial opacity is 1', () => {
+        expect(card.style.opacity).toEqual('1');
+      });
+
+      describe('when drag starts', () => {
+        beforeEach(() => {
+          fireEvent.dragStart(card);
+        });
+
+        // Fixed: Now waits for async update
+        it('opacity is 0', async() => {
+          await waitFor(() => expect(card.style.opacity).toEqual('0'));
+        });
+      });
+    });
+    ```
+    
+    The fix uses `waitFor()` to wait for the asynchronous update to complete before asserting.
+  </Tab>
+  
+  <Tab title="Setup Requirements">
+    If you're using older versions of `react-scripts`, you might need to:
+    
+    1. **Update react-testing-library**:
+       ```bash
+       npm install --save-dev @testing-library/react@latest
+       ```
+    
+    2. **Fix MutationObserver errors**:
+       Update your test script in `package.json`:
+       ```json
+       {
+         "scripts": {
+           "test": "react-scripts test --env=jsdom-fourteen"
+         }
+       }
+       ```
+  </Tab>
+</Tabs>
+
+## Key Testing Concepts
+
+### Using waitFor()
+
+`waitFor()` is essential for testing components that update asynchronously:
+
+```jsx
+import { waitFor } from '@testing-library/react';
+
+// Wait for an element to appear
+await waitFor(() => {
+  expect(screen.getByText('Loaded')).toBeInTheDocument();
+});
+
+// Wait for a condition
+await waitFor(() => {
+  expect(mockCallback).toHaveBeenCalled();
+});
+
+// Wait for style changes
+await waitFor(() => {
+  expect(element.style.opacity).toEqual('0');
+});
+```
+
+<Tip>
+  `waitFor()` repeatedly checks the assertion until it passes or times out. This is perfect for async updates.
+</Tip>
+
+### Testing User Interactions
+
+Test components by simulating user actions:
+
+```jsx
+import { render, fireEvent, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+
+// Using fireEvent (synchronous)
+fireEvent.click(button);
+fireEvent.change(input, { target: { value: 'new value' } });
+fireEvent.dragStart(element);
+
+// Using userEvent (more realistic, async)
+await userEvent.click(button);
+await userEvent.type(input, 'new value');
+```
+
+### Testing Redux Connected Components
+
+When testing components connected to Redux:
+
+```jsx
+import { render } from '@testing-library/react';
+import { Provider } from 'react-redux';
+import { createStore } from 'redux';
+import rootReducer from './reducers';
+
+const renderWithRedux = (
+  component,
+  { initialState, store = createStore(rootReducer, initialState) } = {}
+) => {
+  return {
+    ...render(<Provider store={store}>{component}</Provider>),
+    store
+  };
+};
+
+// Usage
+const { getByText, store } = renderWithRedux(<MyComponent />, {
+  initialState: { user: { name: 'John' } }
+});
+```
+
+### Testing Portals
+
+Components that render to portals (like modals) need special handling:
+
+```jsx
+import { render } from '@testing-library/react';
+
+// Ensure the portal container exists
+beforeEach(() => {
+  const portalRoot = document.createElement('div');
+  portalRoot.setAttribute('id', 'portal-root');
+  document.body.appendChild(portalRoot);
+});
+
+afterEach(() => {
+  document.body.removeChild(document.getElementById('portal-root'));
+});
+
+it('renders modal in portal', () => {
+  const { getByText } = render(<Modal isOpen={true} />);
+  expect(getByText('Modal content')).toBeInTheDocument();
+});
+```
+
+## Common Test Patterns
+
+### Testing Hooks
+
+Test custom hooks using the `renderHook` utility:
+
+```jsx
+import { renderHook, act } from '@testing-library/react';
+import { useCounter } from './useCounter';
+
+it('increments counter', () => {
+  const { result } = renderHook(() => useCounter());
+  
+  act(() => {
+    result.current.increment();
+  });
+  
+  expect(result.current.count).toBe(1);
+});
+```
+
+### Testing Forms
+
+Test form submissions and validation:
+
+```jsx
+import { render, fireEvent, screen } from '@testing-library/react';
+
+it('submits form with valid data', async () => {
+  const handleSubmit = jest.fn();
+  render(<MyForm onSubmit={handleSubmit} />);
+  
+  await userEvent.type(screen.getByLabelText('Email'), 'test@example.com');
+  await userEvent.type(screen.getByLabelText('Password'), 'password123');
+  
+  fireEvent.submit(screen.getByRole('form'));
+  
+  await waitFor(() => {
+    expect(handleSubmit).toHaveBeenCalledWith({
+      email: 'test@example.com',
+      password: 'password123'
+    });
+  });
+});
+```
+
+### Testing Error States
+
+Test error handling and error boundaries:
+
+```jsx
+import { render, screen } from '@testing-library/react';
+
+it('displays error message on fetch failure', async () => {
+  global.fetch = jest.fn(() => Promise.reject('API error'));
+  
+  render(<DataFetchingComponent />);
+  
+  await waitFor(() => {
+    expect(screen.getByText('Error loading data')).toBeInTheDocument();
+  });
+});
+```
+
+## Best Practices
+
+<CardGroup cols={2}>
+  <Card title="Query Priority" icon="magnifying-glass">
+    Prefer queries in this order:
+    1. `getByRole`
+    2. `getByLabelText`
+    3. `getByPlaceholderText`
+    4. `getByText`
+    5. `getByTestId` (last resort)
+  </Card>
+  
+  <Card title="Async Utilities" icon="clock">
+    Use `waitFor`, `findBy*`, and `waitForElementToBeRemoved` for async operations.
+  </Card>
+  
+  <Card title="User Events" icon="hand-pointer">
+    Prefer `@testing-library/user-event` over `fireEvent` for more realistic interactions.
+  </Card>
+  
+  <Card title="Cleanup" icon="broom">
+    React Testing Library automatically cleans up, but clean up mocks and timers manually.
+  </Card>
+</CardGroup>
+
+## Summary: Key Takeaways
+
+<Steps>
+  <Step title="Handle Async Updates">
+    Use `waitFor()` when testing components that update asynchronously. This solves most `act(...)` warnings.
+  </Step>
+  
+  <Step title="Test User Behavior">
+    Focus on testing what users see and do, not implementation details.
+  </Step>
+  
+  <Step title="Setup Test Environment">
+    Ensure you have the latest testing library versions and proper test environment configuration.
+  </Step>
+  
+  <Step title="Mock External Dependencies">
+    Mock API calls, timers, and external libraries for reliable tests.
+  </Step>
+</Steps>
+
+<Warning>
+  Common issues:
+  - `act(...)` warnings usually mean async updates weren't awaited
+  - `MutationObserver is not a constructor` requires `--env=jsdom-fourteen`
+  - Missing cleanup can cause test interference
+</Warning>

@@ -1,0 +1,431 @@
+---
+title: CSS Hover Effects
+description: Interactive hover animations and effects using pure CSS.
+---
+
+# CSS Hover Effects
+
+Hover effects provide immediate visual feedback and enhance user interaction. This page demonstrates various hover animations using pure CSS.
+
+## Text Hover Effects
+
+### Underline Animation
+
+Create an animated underline that grows from the left when hovering over text.
+
+```css
+.hover-underline-animation {
+  display: inline-block;
+  position: relative;
+}
+
+.hover-underline-animation::after {
+  content: '';
+  position: absolute;
+  width: 100%;
+  transform: scaleX(0);
+  height: 2px;
+  bottom: 0;
+  left: 0;
+  background-color: #0087ca;
+  transform-origin: bottom right;
+  transition: transform 0.25s ease-out;
+}
+
+.hover-underline-animation:hover::after {
+  transform: scaleX(1);
+  transform-origin: bottom left;
+}
+```
+
+**How it works:**
+1. Parent element uses `display: inline-block` and `position: relative`
+2. `::after` pseudo-element creates the underline with full width
+3. Initially hidden with `transform: scaleX(0)`
+4. `transform-origin: bottom right` makes it grow from the right
+5. On hover, `scaleX(1)` expands to full width
+6. `transform-origin: bottom left` on hover reverses the growth direction
+
+**Visual result:** A blue underline smoothly animates from left to right beneath the text on hover.
+
+**Variations:**
+- Remove `transform-origin` to grow from center
+- Reverse values to grow from right to left
+- Adjust `height` and `background-color` to match your design
+
+## Button Transitions
+
+Multiple button hover effects to add life to your interface.
+
+### Grow Animation
+
+Button scales up on hover.
+
+```css
+.button-grow {
+  transition: all 0.3s ease-in-out;
+}
+
+.button-grow:hover {
+  transform: scale(1.1);
+}
+```
+
+**Visual result:** Button enlarges to 110% of original size on hover.
+
+**Alternative using new scale property:**
+```css
+.button-grow {
+  transition: scale 0.3s ease-in-out;
+}
+
+.button-grow:hover {
+  scale: 110%;
+}
+```
+
+### Shrink Animation
+
+Button scales down on hover.
+
+```css
+.button-shrink {
+  transition: all 0.3s ease-in-out;
+}
+
+.button-shrink:hover {
+  transform: scale(0.8);
+}
+```
+
+**Visual result:** Button reduces to 80% of original size on hover, creating a "press down" effect.
+
+### Fill Animation
+
+Background and text colors swap on hover.
+
+```css
+.button-fill {
+  background: #fff;
+  color: #000;
+  transition: all 0.3s ease-in-out;
+}
+
+.button-fill:hover {
+  background: #000;
+  color: #fff;
+}
+```
+
+**Visual result:** White button with black text inverts to black button with white text.
+
+### Swing Animation
+
+Button swings side to side using keyframes.
+
+```css
+.button-swing {
+  transition: all 0.2s ease-in-out;
+}
+
+.button-swing:hover {
+  animation: swing 1s ease;
+  animation-iteration-count: 1;
+}
+
+@keyframes swing {
+  15% { transform: translateX(5px); }
+  30% { transform: translateX(-5px); }
+  50% { transform: translateX(3px); }
+  65% { transform: translateX(-3px); }
+  80% { transform: translateX(2px); }
+  100% { transform: translateX(0); }
+}
+```
+
+**How it works:**
+- Keyframes define a sequence of horizontal movements
+- Amplitude decreases over time (5px → 3px → 2px → 0)
+- Creates a natural swinging motion that settles
+
+**Visual result:** Button swings left and right with decreasing intensity, like a pendulum coming to rest.
+
+### Border Animation
+
+Animated borders appear on hover using pseudo-elements.
+
+```css
+.button-bordered {
+  border: none;
+  outline: none;
+  position: relative;
+}
+
+.button-bordered::before,
+.button-bordered::after {
+  border: 0 solid transparent;
+  transition: all 0.3s;
+  content: '';
+  height: 0;
+  position: absolute;
+  width: 24px;
+}
+
+.button-bordered::before {
+  border-top: 2px solid #263059;
+  right: 0;
+  top: -4px;
+}
+
+.button-bordered::after {
+  border-bottom: 2px solid #263059;
+  bottom: -4px;
+  left: 0;
+}
+
+.button-bordered:hover::before,
+.button-bordered:hover::after {
+  width: 100%;
+}
+```
+
+**How it works:**
+1. `::before` creates top border, positioned at top-right
+2. `::after` creates bottom border, positioned at bottom-left
+3. Both start at 24px width
+4. On hover, width expands to 100%
+5. Borders animate from opposite corners toward each other
+
+**Visual result:** Top and bottom borders sweep across the button from opposite corners, meeting in the middle.
+
+## Card Hover Effects
+
+Sophisticated card animations for engaging layouts.
+
+### Rotating Card
+
+Two-sided card that flips on hover.
+
+```html
+<div class="rotating-card">
+  <div class="card-side front"></div>
+  <div class="card-side back"></div>
+</div>
+```
+
+```css
+.rotating-card {
+  perspective: 150rem;
+  position: relative;
+  box-shadow: none;
+  background: none;
+}
+
+.rotating-card .card-side {
+  transition: all 0.8s ease;
+  backface-visibility: hidden;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.rotating-card .card-side.back {
+  transform: rotateY(-180deg);
+}
+
+.rotating-card:hover .card-side.front {
+  transform: rotateY(180deg);
+}
+
+.rotating-card:hover .card-side.back {
+  transform: rotateY(0deg);
+}
+```
+
+**How it works:**
+1. `perspective` on container creates 3D space
+2. Both sides positioned absolutely in same space
+3. `backface-visibility: hidden` hides the back of rotated elements
+4. Back side starts rotated 180° (hidden)
+5. On hover, front rotates to 180° and back rotates to 0°
+6. Creates a flipping effect revealing the back side
+
+**Visual result:** Card flips around the Y-axis, revealing the back side in a smooth 3D rotation.
+
+### Shifting Card
+
+Card tilts based on mouse position using CSS variables and JavaScript.
+
+```css
+.shifting-card {
+  transition: transform 0.2s ease-out;
+  transform: rotateX(calc(10deg * var(--dx, 0)))
+    rotateY(calc(10deg * var(--dy, 0)));
+}
+```
+
+```js
+const card = document.querySelector('.shifting-card');
+const { x, y, width, height } = card.getBoundingClientRect();
+const cx = x + width / 2;
+const cy = y + height / 2;
+
+const handleMove = e => {
+  const { pageX, pageY } = e;
+  const dx = (cx - pageX) / (width / 2);
+  const dy = (cy - pageY) / (height / 2);
+  e.target.style.setProperty('--dx', dx);
+  e.target.style.setProperty('--dy', dy);
+};
+
+card.addEventListener('mousemove', handleMove);
+```
+
+**How it works:**
+1. Calculate card center position
+2. Track mouse position on `mousemove`
+3. Calculate normalized distance from center (-1 to 1)
+4. Update CSS variables `--dx` and `--dy`
+5. Transform applies rotation based on mouse position
+6. Card tilts toward cursor
+
+**Visual result:** Card dynamically tilts in 3D space following the mouse cursor, creating an interactive parallax effect.
+
+### Perspective Card
+
+Card with 3D perspective that adjusts on hover.
+
+```css
+.perspective-card {
+  transform: perspective(1500px) rotateY(15deg);
+  transition: transform 1s ease 0s;
+}
+
+.perspective-card:hover {
+  transform: perspective(3000px) rotateY(5deg);
+}
+```
+
+**How it works:**
+1. Initial state has perspective of 1500px with 15° rotation
+2. Creates angled, 3D-looking card
+3. On hover, perspective increases to 3000px (less extreme)
+4. Rotation decreases to 5° (more face-on)
+5. Card appears to "straighten" toward viewer
+
+**Visual result:** Card sits at an angle, then smoothly rotates toward the user on hover while the perspective depth increases.
+
+## Shadow Effects
+
+### Hover Shadow Box
+
+Elevated shadow on hover.
+
+```css
+.shadow-box {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: box-shadow 0.3s ease;
+}
+
+.shadow-box:hover {
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+}
+```
+
+**Visual result:** Subtle shadow deepens on hover, creating a lifting effect.
+
+## Typewriter Effect
+
+Animated typing effect using CSS and JavaScript.
+
+```html
+<div class="typewriter-effect">
+  <div class="text" id="typewriter-text"></div>
+</div>
+```
+
+```css
+.typewriter-effect {
+  display: flex;
+  justify-content: center;
+  font-family: monospace;
+}
+
+.typewriter-effect > .text {
+  max-width: 0;
+  animation: typing 3s steps(var(--characters)) infinite;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.typewriter-effect::after {
+  content: " |";
+  animation: blink 1s infinite;
+  animation-timing-function: step-end;
+}
+
+@keyframes typing {
+  75%, 100% {
+    max-width: calc(var(--characters) * 1ch);
+  }
+}
+
+@keyframes blink {
+  0%, 75%, 100% { opacity: 1; }
+  25% { opacity: 0; }
+}
+```
+
+```js
+const typeWriter = document.getElementById('typewriter-text');
+const text = 'Lorem ipsum dolor sit amet.';
+
+typeWriter.innerHTML = text;
+typeWriter.style.setProperty('--characters', text.length);
+```
+
+**How it works:**
+1. Text element starts with `max-width: 0` (hidden)
+2. `overflow: hidden` clips invisible text
+3. `white-space: nowrap` prevents wrapping
+4. JavaScript sets text and character count variable
+5. `typing` animation expands width using `steps()` for discrete character reveals
+6. `::after` adds blinking cursor with `blink` animation
+7. Animation loops infinitely
+
+**Visual result:** Text appears character by character as if being typed, with a blinking cursor. After fully typed, it resets and repeats.
+
+## Performance Tips
+
+1. **Use transform and opacity** - GPU-accelerated properties
+2. **Avoid layout thrashing** - Don't animate `width`, `height`, `margin`, etc.
+3. **Keep transitions short** - 200-500ms for most hover effects
+4. **Use `will-change` sparingly** - Only for complex animations
+5. **Test on mobile** - Hover effects don't work on touch devices
+6. **Provide alternatives** - Consider focus states for keyboard navigation
+7. **Respect user preferences** - Honor `prefers-reduced-motion`
+
+## Accessibility Considerations
+
+```css
+/* Disable animations for users who prefer reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .hover-underline-animation::after,
+  .button-grow,
+  .button-shrink,
+  .rotating-card .card-side {
+    transition: none !important;
+    animation: none !important;
+  }
+}
+```
+
+**Important:**
+- Not all users can use a mouse (keyboard, screen readers, touch)
+- Ensure hover effects have `:focus` equivalents
+- Don't rely solely on hover to reveal critical information
+- Test with keyboard navigation
+
+These hover effects can significantly enhance interactivity when applied thoughtfully to create engaging, accessible user experiences.

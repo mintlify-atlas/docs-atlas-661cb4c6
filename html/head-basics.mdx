@@ -1,0 +1,182 @@
+---
+title: HTML Head Basics
+description: Essential metadata, SEO tags, and best practices for the HTML head element.
+---
+
+## The HTML Head Element
+
+An essential part of an HTML document is the `<head>` element, which contains metadata about the document. Some vital information, such as the document's title and character encoding are stored in the `<head>` element. It's also where you can include links to external resources such as CSS stylesheets and JavaScript files.
+
+## Recommended Minimum Head
+
+More often than not, this sort of metadata can grow in complexity with time. However, there are a few important things that should never be omitted. Here's the bare minimum you should include in your `<head>` element:
+
+```html
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Page Title</title>
+  <meta name="description" content="Page description. No longer than 155 characters.">
+</head>
+```
+
+### Essential Meta Tags Explained
+
+- **charset**: The `charset` meta tag tells the browser what character encoding to use when rendering the document. UTF-8 is the standard encoding that supports all characters and symbols.
+
+- **viewport**: The `viewport` meta tag tells the browser how to render the page on mobile devices. This ensures your site is responsive and displays correctly on all screen sizes.
+
+- **title**: The `title` element is used by search engines to display the page's title in search results. It should be descriptive, unique, and under 60 characters.
+
+- **description**: The `description` meta tag is used by search engines to display a short description of the page in search results. Keep it under 155 characters for optimal display.
+
+## Favicons and Icons
+
+Over the years, there have been many different and often conflicting guidelines about favicons. Nowadays, you can get away with a very minimal set of meta tags and tailor them to your needs as you go:
+
+```html
+<head>
+  <link rel="icon" sizes="192x192" href="favicon.png">
+  <link rel="apple-touch-icon" href="favicon.png">
+  <link rel="mask-icon" href="favicon.svg" color="#000000">
+</head>
+```
+
+By creating a single 192x192 PNG asset, you can cover almost all modern devices and browsers without too much hassle. If you want to go the extra mile, you can include a few more quite easily. Simply downscale the image and include more `rel="icon"` meta tags with different `sizes` attributes.
+
+### Icon Types
+
+- **Standard icon**: Used by most modern browsers
+- **Apple touch icon**: Used when users add your site to their iOS home screen
+- **Mask icon**: Used by Safari for pinned tabs (SVG format with specified color)
+
+## SEO and Metadata Links
+
+Some `<link>` elements are important for SEO and metadata purposes. Here's a list of really important ones to include:
+
+```html
+<head>
+  <link rel="canonical" href="https://samplesite.com/page.html">
+  <link rel="sitemap" type="application/xml" href="https://samplesite.com/sitemap.xml">
+  <link rel="alternate" type="application/rss+xml" title="RSS" href="https://samplesite.com/rss.xml">
+  <link rel="search" type="application/opensearchdescription+xml" title="Search" href="https://samplesite.com/search.xml">
+</head>
+```
+
+### Link Elements Explained
+
+- **canonical**: The `canonical` link element tells search engines which URL is the canonical version of the page. This helps prevent duplicate content issues and ensures that the correct page is indexed.
+
+- **sitemap**: The `sitemap` link element tells search engines where to find the sitemap for the website. Sitemaps are XML files that contain a list of all the pages on the website and their metadata. They are used by search engines to index the website.
+
+- **alternate (RSS)**: The `alternate` link element tells search engines where to find the RSS feed for the website. RSS feeds contain a list of the most recent posts and are used by search engines and RSS readers.
+
+- **search**: The `search` link element is used by browsers to display a search box in the browser's address bar, allowing users to search the website directly.
+
+## Social Media Tags
+
+For better sharing on social media platforms, include Open Graph and Twitter Card tags:
+
+```html
+<head>
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://samplesite.com/page.html">
+  <meta property="og:title" content="Page Title">
+  <meta property="og:description" content="Page description">
+  <meta property="og:image" content="https://samplesite.com/image.jpg">
+
+  <!-- Twitter -->
+  <meta property="twitter:card" content="summary_large_image">
+  <meta property="twitter:url" content="https://samplesite.com/page.html">
+  <meta property="twitter:title" content="Page Title">
+  <meta property="twitter:description" content="Page description">
+  <meta property="twitter:image" content="https://samplesite.com/image.jpg">
+</head>
+```
+
+These tags control how your content appears when shared on social media platforms, ensuring proper titles, descriptions, and preview images.
+
+## Resource Hints
+
+Improve performance by preloading or prefetching resources:
+
+```html
+<head>
+  <!-- Preload critical resources -->
+  <link rel="preload" href="/fonts/main.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/css/critical.css" as="style">
+  
+  <!-- Prefetch resources for next page -->
+  <link rel="prefetch" href="/page2.html">
+  <link rel="dns-prefetch" href="https://external-api.com">
+</head>
+```
+
+### Resource Hint Types
+
+- **preload**: Fetch critical resources early in the page load
+- **prefetch**: Fetch resources that might be needed for future navigation
+- **dns-prefetch**: Resolve DNS for external domains ahead of time
+- **preconnect**: Establish early connections to important third-party origins
+
+## Complete Head Example
+
+Here's a comprehensive example combining all the essential elements:
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Essential meta tags -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  
+  <!-- SEO -->
+  <title>Page Title - Site Name</title>
+  <meta name="description" content="Page description. No longer than 155 characters.">
+  <link rel="canonical" href="https://samplesite.com/page.html">
+  
+  <!-- Icons -->
+  <link rel="icon" sizes="192x192" href="/favicon.png">
+  <link rel="apple-touch-icon" href="/favicon.png">
+  
+  <!-- Open Graph -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://samplesite.com/page.html">
+  <meta property="og:title" content="Page Title">
+  <meta property="og:description" content="Page description">
+  <meta property="og:image" content="https://samplesite.com/image.jpg">
+  
+  <!-- Stylesheets -->
+  <link rel="preload" href="/css/main.css" as="style">
+  <link rel="stylesheet" href="/css/main.css">
+  
+  <!-- Scripts -->
+  <script src="/js/main.js" defer></script>
+</head>
+<body>
+  <!-- Page content -->
+</body>
+</html>
+```
+
+## Best Practices
+
+1. **Always include the essential meta tags**: charset, viewport, title, and description
+2. **Keep titles under 60 characters** for optimal display in search results
+3. **Keep descriptions under 155 characters** to avoid truncation
+4. **Use absolute URLs** for canonical links and social media tags
+5. **Optimize favicon size** - a single 192x192 PNG covers most use cases
+6. **Preload critical resources** to improve initial page load performance
+7. **Include social media tags** for better sharing experience
+8. **Use semantic, descriptive titles** that accurately represent the page content
+
+## Next Steps
+
+Now that you understand the HTML head basics, explore:
+
+- How to optimize images with lazy loading and proper alt text
+- Security best practices for external links
+- Advanced performance optimization techniques
+- Accessibility guidelines for better user experience

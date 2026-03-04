@@ -1,0 +1,203 @@
+---
+title: Git Aliases
+description: Increase productivity with Git aliases for common operations
+---
+
+# Git Aliases
+
+Git allows you to create aliases for many common operations, making it easier to remember and execute them. This is one of the most powerful customization features Git offers, allowing you to create shortcuts for complex commands and make your workflow more efficient.
+
+## Creating Aliases
+
+Simply run `git config --global alias.<alias> <command>` to create an alias for the specified command. The alias can then be used in place of the command when running Git commands.
+
+### Basic Alias Creation
+
+```bash
+# Syntax: git config --global alias.<alias> <command>
+
+git config --global alias.co checkout
+# Creates an alias `co` for the `checkout` command
+
+git config --global alias.cm "commit -m"
+# Creates an alias `cm` for the `commit -m` command
+```
+
+If your command contains spaces, wrap it in quotes.
+
+### Using the Configuration File
+
+Alternatively, you can edit the configuration file and add multiple aliases at once. This is more practical for adding complex commands, as you don't have to worry about escaping special characters:
+
+```bash
+git config --global -e
+# Opens the global git configuration file in the default git text editor
+```
+
+## Useful Aliases
+
+Below is a comprehensive list of aliases for increasing productivity when working with Git. These aliases cover common operations and workflows:
+
+```properties title="~/.gitconfig"
+[alias]
+  co = checkout
+  cob = checkout -b
+  coo = !git fetch && git checkout
+  br = branch
+  brd = branch -d
+  st = status
+  aa = add -A .
+  unstage = reset --soft HEAD^
+  cm = commit -m
+  amend = commit --amend -m
+  fix = commit --fixup
+  undo = reset HEAD~1
+  rv = revert
+  cp = cherry-pick
+  pu = !git push origin `git branch --show-current`
+  fush = push -f
+  flush = push --force-with-lease
+  mg = merge --no-ff
+  rb = rebase
+  rbc = rebase --continue
+  rba = rebase --abort
+  rbs = rebase --skip
+  rom = !git fetch && git rebase -i origin/master --autosquash
+  save = stash push
+  pop = stash pop
+  apply = stash apply
+  rl = reflog
+```
+
+## Alias Categories
+
+### Branch Management
+
+```bash
+# Checkout shortcuts
+git co master          # Instead of: git checkout master
+git cob feature-1      # Instead of: git checkout -b feature-1
+git coo patch-1        # Fetch and checkout in one command
+
+# Branch operations
+git br                 # Instead of: git branch
+git brd old-feature    # Instead of: git branch -d old-feature
+```
+
+### Commit Operations
+
+```bash
+# Staging and committing
+git aa                 # Instead of: git add -A .
+git cm "Fix bug"       # Instead of: git commit -m "Fix bug"
+git amend "New msg"    # Instead of: git commit --amend -m "New msg"
+
+# Commit management
+git unstage            # Instead of: git reset --soft HEAD^
+git undo               # Instead of: git reset HEAD~1
+git fix HEAD~2         # Instead of: git commit --fixup HEAD~2
+```
+
+### Status and History
+
+```bash
+git st                 # Instead of: git status
+git rl                 # Instead of: git reflog
+```
+
+### Push and Pull
+
+```bash
+# Push to current branch
+git pu                 # Pushes to origin with current branch name
+
+# Force push options
+git fush               # Force push (use with caution)
+git flush              # Force push with lease (safer alternative)
+```
+
+### Merge and Rebase
+
+```bash
+# Merge with no fast-forward
+git mg feature-1       # Instead of: git merge --no-ff feature-1
+
+# Rebase operations
+git rb master          # Instead of: git rebase master
+git rbc                # Instead of: git rebase --continue
+git rba                # Instead of: git rebase --abort
+git rbs                # Instead of: git rebase --skip
+git rom                # Fetch and interactive rebase on origin/master
+```
+
+### Stash Operations
+
+```bash
+git save               # Instead of: git stash push
+git pop                # Instead of: git stash pop
+git apply              # Instead of: git stash apply
+```
+
+## Advanced Aliases with Shell Commands
+
+Aliases that start with `!` execute shell commands, allowing for more complex operations:
+
+```properties
+[alias]
+  # Fetch and checkout in one command
+  coo = !git fetch && git checkout
+  
+  # Push to current branch
+  pu = !git push origin `git branch --show-current`
+  
+  # Fetch and interactive rebase with autosquash
+  rom = !git fetch && git rebase -i origin/master --autosquash
+```
+
+## Listing Aliases
+
+To view all your configured aliases:
+
+```bash
+git config --get-regexp alias
+```
+
+## Best Practices
+
+- Keep aliases short and memorable
+- Use consistent naming conventions
+- Document complex aliases
+- Test aliases before adding them to global configuration
+- Avoid overriding built-in Git commands
+- Share useful aliases with your team
+
+## Common Workflows
+
+### Quick Commit Workflow
+
+```bash
+git aa
+git cm "Add new feature"
+git pu
+```
+
+### Branch and Merge Workflow
+
+```bash
+git cob feature-2
+# Make changes...
+git aa
+git cm "Implement feature 2"
+git co master
+git mg feature-2
+```
+
+### Stash and Switch Workflow
+
+```bash
+git save
+git co master
+# Do some work...
+git co -
+git pop
+```

@@ -1,0 +1,104 @@
+---
+title: JavaScript Arrays Overview
+description: Master JavaScript array operations, methods, and best practices
+---
+
+# JavaScript Arrays
+
+Arrays are one of the most fundamental data structures in JavaScript. This guide covers essential array operations, from initialization to advanced manipulation techniques.
+
+## Why Arrays Matter
+
+JavaScript arrays are versatile, dynamic collections that can hold any type of value. Understanding array methods and patterns is crucial for writing efficient, readable code.
+
+## Core Topics
+
+<CardGroup cols={2}>
+  <Card title="Array Initialization" icon="plus" href="./initialization">
+    Learn the many ways to create and initialize arrays
+  </Card>
+  <Card title="Array Methods" icon="code" href="./methods">
+    Master essential array methods like map, filter, and reduce
+  </Card>
+</CardGroup>
+
+## Quick Examples
+
+### Remove Duplicates
+
+Use the `Set` object to easily remove duplicate values from an array:
+
+```javascript
+const uniqueElements = arr => [...new Set(arr)];
+
+uniqueElements([1, 2, 2, 3, 4, 4, 5]); // [1, 2, 3, 4, 5]
+```
+
+### Check if All Values Are Equal
+
+Compare all array elements using `Array.prototype.every()`:
+
+```javascript
+const allEqual = arr => arr.every(val => val === arr[0]);
+
+allEqual([1, 1, 1]); // true
+allEqual([1, 1, 2]); // false
+```
+
+### Check for Duplicates
+
+Compare the array length with the size of a Set:
+
+```javascript
+const hasDuplicates = arr => arr.length !== new Set(arr).size;
+
+hasDuplicates([1, 2, 2, 3, 4, 4, 5]); // true
+hasDuplicates([1, 2, 3, 4, 5]); // false
+```
+
+## Common Patterns
+
+### Comparing with a Mapping Function
+
+For complex values like objects, use a mapping function:
+
+```javascript
+const allEqualBy = (arr, fn) =>
+  arr.every((val, i) => fn(val, i, arr) === fn(arr[0], 0, arr));
+
+allEqualBy([{ a: 1 }, { a: 1 }, { a: 1 }], obj => obj.a); // true
+allEqualBy([{ a: 1 }, { a: 1 }, { a: 2 }], obj => obj.a); // false
+```
+
+### Filter Unique Elements By Property
+
+```javascript
+const uniqueElementsBy = (arr, fn) =>
+  arr.reduce((acc, v) => {
+    if (!acc.some(x => fn(v, x))) acc.push(v);
+    return acc;
+  }, []);
+
+const data = [
+  { id: 0, value: 'a' },
+  { id: 1, value: 'b' },
+  { id: 2, value: 'c' },
+  { id: 1, value: 'd' },
+  { id: 0, value: 'e' }
+];
+
+const idComparator = (a, b) => a.id == b.id;
+uniqueElementsBy(data, idComparator);
+// [ { id: 0, value: 'a' }, { id: 1, value: 'b' }, { id: 2, value: 'c' } ]
+```
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Learn Initialization" icon="arrow-right" href="./initialization">
+    Discover different ways to create and initialize arrays
+  </Card>
+  <Card title="Master Methods" icon="arrow-right" href="./methods">
+    Deep dive into essential array methods
+  </Card>
+</CardGroup>

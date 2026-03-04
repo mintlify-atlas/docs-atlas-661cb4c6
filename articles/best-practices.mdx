@@ -1,0 +1,420 @@
+---
+title: Best Practices
+description: Industry-standard best practices for web development, programming, and professional growth.
+---
+
+## Web Development Best Practices
+
+### SEO for Developers
+
+SEO is becoming increasingly relevant as the internet keeps growing. Here are essential SEO tips for web developers:
+
+#### 1. Craft User-Friendly URLs
+
+URL slugs should be:
+
+- **Human-readable** with words separated by dashes
+- **Free of random letters or digits**
+- **Mapped to a logical structure** (e.g., `/blog/posts/awesome-list-of-seo-tips`)
+
+```html
+<!-- Good URL structure -->
+https://example.com/blog/seo-tips-for-developers
+
+<!-- Bad URL structure -->
+https://example.com/post.php?id=12345&cat=blog
+```
+
+Always:
+- Build a sitemap to help search engines discover your content
+- Redirect broken or old URLs to new ones
+- Reduce 404 pages through proper redirects
+
+#### 2. Use Structured Data
+
+Structured data helps Google power featured snippets - those cards that appear at the top of search results:
+
+```html
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "SEO Tips for Developers",
+  "author": {
+    "@type": "Person",
+    "name": "John Doe"
+  },
+  "datePublished": "2024-01-15"
+}
+</script>
+```
+
+This helps you:
+- Rank higher in search results
+- Potentially land featured snippets
+- Provide richer search result displays
+
+#### 3. Monitor with Analytics Tools
+
+Set up essential tracking:
+
+- **Google Analytics**: Track user behavior and identify problems and opportunities
+- **Google Search Console**: Understand what users search before landing on your site
+
+These tools help you make data-driven decisions about content and optimization.
+
+#### 4. Optimize Code Quality
+
+- Write **semantic markup** using proper HTML5 elements
+- Keep **requests to a minimum** to improve load times
+- Optimize for **all device types** (mobile, tablet, desktop)
+- Make your website **accessible** to all users
+- Ensure **fast load times** through optimization
+- **Audit regularly** using tools like Lighthouse
+
+### Accessibility Best Practices
+
+Accessibility (a11y) can improve your website and attract new users. Here are essential accessibility tips:
+
+#### 1. Use Semantic HTML
+
+HTML5 introduced semantic elements to replace generic `<div>` elements:
+
+```html
+<!-- Bad: Non-semantic -->
+<div class="header">
+  <div class="nav">...</div>
+</div>
+<div class="main">...</div>
+
+<!-- Good: Semantic -->
+<header>
+  <nav>...</nav>
+</header>
+<main>...</main>
+```
+
+Use appropriate elements:
+- `<header>`, `<nav>`, `<main>`, `<article>`, `<section>`, `<aside>`, `<footer>`
+- Each element has meaning and helps screen readers understand your layout
+
+#### 2. Use Color Correctly
+
+WCAG specifies a minimum contrast ratio of **4.5:1** between text and background:
+
+- Check contrast ratios in Chrome Developer Tools
+- Use color meaningfully and sparsely
+- Don't rely on color alone to convey information
+- Support colors with text literals or icons
+
+#### 3. Caption Images and Video
+
+Provide alternative text for all media:
+
+```html
+<!-- Descriptive alt text -->
+<img src="boat.jpg" alt="A boat sailing on the ocean">
+
+<!-- Decorative images use empty alt -->
+<img src="decorative.jpg" alt="">
+```
+
+**Writing good alt text:**
+- Describe the image as if to someone who cannot see it
+- Be accurate and concise (under 125 characters)
+- Don't use "picture of" or "image of"
+- Provide context, not just object names
+- Leave alt empty (but present) for purely decorative images
+
+#### 4. Show and Tell
+
+Icons and colors alone aren't accessible for everyone:
+
+```html
+<!-- Bad: Icon only -->
+<button><span class="icon-save"></span></button>
+
+<!-- Good: Icon with text -->
+<button>
+  <span class="icon-save"></span>
+  <span>Save</span>
+</button>
+```
+
+#### 5. Be Consistent
+
+Elements with similar meaning should look similar:
+
+- Links should be visually distinct and consistent
+- Buttons should be recognizable across your site
+- Interactive elements should be clearly identifiable
+- Users should anticipate element behavior
+
+#### 6. Label Your Inputs
+
+Every `<input>` element needs a label:
+
+```html
+<!-- Good: Using label wrapper -->
+<label>
+  Email address
+  <input type="email" name="email">
+</label>
+
+<!-- Good: Using for attribute -->
+<label for="email">Email address</label>
+<input type="email" id="email" name="email">
+
+<!-- Good: Using aria-label -->
+<input type="email" name="email" aria-label="Email address">
+
+<!-- Bad: Placeholder only -->
+<input type="email" placeholder="Email address">
+```
+
+Do not rely on `placeholder` attributes - they cause problems for screen reader users.
+
+#### 7. Design Responsively
+
+Responsiveness goes beyond screen size:
+
+- Support **mouse** navigation
+- Support **keyboard** navigation (Tab, Enter, Arrow keys)
+- Support **touch** navigation (tap, swipe)
+- Support **any combination** of input methods
+
+#### 8. Organize Your Content
+
+Good organization benefits all users:
+
+- Easy to scan and understand
+- Clear sections and headings
+- Properly grouped related content
+- Logical reading order
+- Consistent navigation patterns
+
+### Security Best Practices
+
+#### Protect Against Tabnabbing
+
+When using `target="_blank"`, always add security attributes:
+
+```html
+<!-- Bad: Vulnerable to tabnabbing -->
+<a href="https://external.com" target="_blank">
+  External resource
+</a>
+
+<!-- Good: Protected with rel attribute -->
+<a 
+  href="https://external.com" 
+  target="_blank" 
+  rel="noopener noreferrer"
+>
+  External resource
+</a>
+```
+
+**Why this matters:**
+- New tabs gain access to your page via `Window.opener`
+- Malicious sites can change your page's URL (tabnabbing)
+- Third-party resources can be compromised over time
+- `rel="noopener noreferrer"` prevents this security risk
+
+### Performance Best Practices
+
+#### Lazy Load Images
+
+Improve page load times with native lazy loading:
+
+```html
+<img 
+  src="/img/photo.jpg" 
+  alt="A descriptive alt text" 
+  loading="lazy" 
+/>
+```
+
+Benefits:
+- Images load only when close to viewport
+- Reduces initial page load time
+- Optimizes resource allocation
+- Supported in most modern browsers
+- Works as progressive enhancement
+
+## Programming Best Practices
+
+### Write Explicit Code
+
+Explicit code beats magic abstractions:
+
+#### 1. Prefer Named Variables
+
+```js
+// Hard to follow
+const result = data
+  .map(item => item.value)
+  .filter(v => v > 10)
+  .reduce((a, b) => a + b, 0);
+
+// Easier to follow
+const values = data.map(item => item.value);
+const filteredValues = values.filter(v => v > 10);
+const result = filteredValues.reduce((a, b) => a + b, 0);
+```
+
+Benefits:
+- Named variables serve as breadcrumbs
+- Easier to debug and test
+- More maintainable over time
+- Simpler to reuse logic
+
+#### 2. Use Explicit Imports and Exports
+
+```js
+// Explicit imports make dependencies obvious
+import express from 'express';
+import userRoutes from './routes/user.js';
+import { validateUser } from './utils/validation.js';
+
+const app = express();
+app.use('/users', userRoutes);
+
+// Explicit exports
+export default app;
+export { validateUser };
+```
+
+#### 3. Document Magic Conventions
+
+If you must use implicit transformations:
+
+```js
+// Explicit transformation (preferred)
+const user = fetch('/api/user')
+  .then(res => res.json())
+  .then(data => ({
+    userId: data.user_id,
+    userName: data.user_name,
+  }));
+
+// If using implicit transformation, document it
+// Automatically converts snake_case to camelCase
+import { deepCamelizeKeys } from './deepCamelizeKeys.js';
+const user = fetch('/api/user')
+  .then(res => res.json())
+  .then(deepCamelizeKeys);
+```
+
+### Manage Technical Debt
+
+Technical debt is the natural result of writing code about something we don't fully understand:
+
+#### Understanding Technical Debt
+
+**Causes:**
+- Disagreement between business needs and implementation
+- Poor early design choices
+- Changing business requirements
+- Lack of communication
+
+**Symptoms:**
+- Lowered productivity
+- Increased development time
+- Decreased code quality
+- Lowered team morale
+
+#### Managing Debt
+
+1. **Early on**: It's acceptable to take on debt to get the project started
+2. **Track it**: Identify and document technical debt as it accumulates
+3. **Reduce it**: After launch, start reducing debt or stop taking on more
+4. **Prioritize**: Base on impact or effort required
+5. **Maintain**: Keep a process to manage debt long-term
+
+### Avoid Premature Modularization
+
+Modularization is a tool, not a rule:
+
+#### When to Modularize
+
+- **Large projects** with substantial independent modules
+- When modules need **independent maintenance and testing**
+- When different **teams own different modules**
+- When you need to **scale specific areas independently**
+
+#### When to Avoid
+
+- **Small projects** or side projects
+- **Early-stage development** when requirements aren't clear
+- **Solo development** or tiny teams
+- When it adds **unnecessary complexity**
+
+```js
+// Monolithic approach for small projects
+const createPost = (title, content) => {
+  console.log(`Post created: ${title}`);
+}
+
+const addComment = (postId, comment) => {
+  console.log(`Comment added to post ${postId}`);
+}
+
+// Extract to modules only when necessary
+```
+
+**Remember**: You can always modularize later when the need arises naturally.
+
+## Career Best Practices
+
+### Develop Critical Thinking
+
+Avoid falling for bad advice by:
+
+1. **Understanding the three types of knowledge:**
+   - What you know you know
+   - What you know you don't know
+   - What you don't know you don't know
+
+2. **Picking reputable sources**: Books, official docs, experienced developers
+
+3. **Doing your own research**: Don't blindly follow advice
+
+4. **Experimenting**: Try things out and see what works
+
+5. **Being humble**: Acknowledge gaps in your knowledge
+
+### Spot "Senior Juniorism"
+
+Be wary of advice that:
+
+- Uses absolute statements ("always" or "never")
+- Lacks nuance or context
+- Comes from inexperienced but confident sources
+- Ignores trade-offs
+- Follows trends blindly
+
+### Benefits of Writing
+
+Technical writing helps you:
+
+- Clarify your understanding
+- Build your personal brand
+- Improve communication skills
+- Connect with the community
+- Learn by teaching others
+
+## Summary
+
+Key takeaways for best practices:
+
+1. **Accessibility first**: Semantic HTML, proper alt text, labeled inputs
+2. **Performance matters**: Lazy loading, resource hints, optimization
+3. **Security is essential**: Protect users with proper link attributes
+4. **SEO helps discoverability**: Good URLs, structured data, analytics
+5. **Write explicit code**: Named variables, clear imports, minimal magic
+6. **Manage technical debt**: Track it, reduce it, keep it in check
+7. **Modularize wisely**: Only when necessary, not prematurely
+8. **Think critically**: Question advice, do research, experiment
+
+Apply these practices to build better websites and become a better developer!

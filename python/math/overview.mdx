@@ -1,0 +1,162 @@
+---
+title: Python Math Operations
+description: Mathematical utilities and algorithms for common calculations in Python
+---
+
+# Python Math Operations
+
+This collection provides mathematical utilities and algorithms for common calculations, from basic combinatorics to number theory.
+
+## Binomial Coefficient
+
+Calculate the number of ways to choose k items from n items without repetition and without order:
+
+```python
+from math import comb
+
+def binomial_coefficient(n, k):
+  return comb(n, k)
+
+binomial_coefficient(8, 2) # 28
+```
+
+## Hamming Distance
+
+Calculate the Hamming distance between two integers (the number of positions at which corresponding bits differ):
+
+```python
+def hamming_distance(a, b):
+  return bin(a ^ b).count('1')
+
+hamming_distance(2, 3) # 1
+```
+
+The Hamming distance is calculated by:
+1. Using XOR (`^`) to find bit differences
+2. Converting the result to binary with `bin()`
+3. Counting the number of `1`s in the binary representation
+
+## Prime Factors
+
+Find the list of prime factors of a number:
+
+```python
+def prime_factors(num):
+  factors = []
+  factor = 2
+
+  while (num >= 2):
+    if (num % factor == 0):
+      factors.append(factor)
+      num = num / factor
+    else:
+      factor += 1
+  return factors
+
+prime_factors(12) # [2, 2, 3]
+prime_factors(42) # [2, 3, 7]
+```
+
+This algorithm:
+1. Starts with the smallest prime (2)
+2. Divides the number by the current factor if it divides evenly
+3. Increments the factor if it doesn't divide evenly
+4. Continues until the number is reduced to 1
+
+## Practical Use Cases
+
+### Probability and Statistics
+
+Calculate combinations for probability problems:
+
+```python
+# Calculate probability of getting exactly 2 heads in 5 coin flips
+total_outcomes = 2 ** 5  # 32
+favorable_outcomes = binomial_coefficient(5, 2)  # 10
+probability = favorable_outcomes / total_outcomes  # 0.3125 or 31.25%
+```
+
+### Data Integrity
+
+Use Hamming distance for error detection:
+
+```python
+original = 0b1010  # Binary: 1010
+received = 0b1011  # Binary: 1011
+errors = hamming_distance(original, received)  # 1
+
+if errors > 0:
+    print(f"Detected {errors} bit error(s)")
+```
+
+### Cryptography
+
+Find prime factors for RSA-related calculations:
+
+```python
+number = 15
+factors = prime_factors(number)  # [3, 5]
+print(f"{number} = {' × '.join(map(str, factors))}")
+# Output: 15 = 3 × 5
+```
+
+### Combinatorial Problems
+
+Solve selection problems:
+
+```python
+# How many ways to choose 3 team members from 10 people?
+ways = binomial_coefficient(10, 3)  # 120
+
+# How many poker hands (5 cards from 52)?
+hands = binomial_coefficient(52, 5)  # 2,598,960
+```
+
+### Error Correction Codes
+
+Compare bit patterns:
+
+```python
+pattern1 = 0b11110000
+pattern2 = 0b11111111
+differences = hamming_distance(pattern1, pattern2)  # 4
+
+# Determine if patterns are similar enough
+threshold = 2
+if differences <= threshold:
+    print("Patterns are similar")
+else:
+    print("Patterns are significantly different")
+```
+
+### Number Theory
+
+Analyze number properties:
+
+```python
+def is_prime(n):
+    factors = prime_factors(n)
+    return len(factors) == 1 and factors[0] == n
+
+is_prime(17)  # True
+is_prime(18)  # False
+
+# Find the greatest common divisor using prime factors
+def common_factors(a, b):
+    factors_a = prime_factors(a)
+    factors_b = prime_factors(b)
+    return set(factors_a) & set(factors_b)
+
+common_factors(12, 18)  # {2, 3}
+```
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Dates" icon="calendar" href="/python/dates/overview">
+    Learn about date operations
+  </Card>
+  <Card title="Strings" icon="text" href="/python/strings/overview">
+    Explore string manipulation utilities
+  </Card>
+</CardGroup>

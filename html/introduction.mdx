@@ -1,0 +1,124 @@
+---
+title: HTML & Web Development
+description: Master HTML 5 with this collection of tips, tricks and code examples covering elements, tags, links, forms, tables and more.
+---
+
+## Welcome to HTML & Web Development
+
+The HTML article collection contains tips, tricks and practical code examples to help you master web development. This collection covers elements, tags, links, forms, tables and more.
+
+## What You'll Learn
+
+This documentation covers essential HTML concepts and best practices:
+
+- **Document Structure**: Learn how to properly structure HTML documents with semantic elements
+- **Head Elements**: Master the `<head>` section with metadata, icons, and SEO tags
+- **Accessibility**: Make your websites accessible to all users with proper markup
+- **Performance**: Optimize your HTML for better page load times
+- **Security**: Protect your users with secure linking practices
+- **Modern HTML**: Explore new HTML5 features and APIs
+
+## Core Concepts
+
+### Semantic HTML
+
+HTML5 introduced a variety of new semantic HTML elements to help replace the much dreaded `<div>`, such as `<section>`, `<main>`, `<article>`, `<nav>` and more. When developing a website, you should understand what each part of your layout represents and try to use the appropriate element for it.
+
+```html
+<main>
+  <article>
+    <header>
+      <h1>Article Title</h1>
+    </header>
+    <section>
+      <p>Article content goes here...</p>
+    </section>
+  </article>
+  <nav>
+    <a href="/home">Home</a>
+    <a href="/about">About</a>
+  </nav>
+</main>
+```
+
+### Accessibility First
+
+Accessibility (a11y) can improve your website and attract new users. Some key principles:
+
+- **Use semantic HTML** for proper document structure
+- **Caption images** with descriptive `alt` attributes
+- **Label inputs** appropriately using `<label>` elements
+- **Design responsively** for all devices and input methods
+- **Organize content** with clear sections and hierarchy
+
+### Performance Optimization
+
+HTML plays a crucial role in website performance:
+
+```html
+<!-- Lazy load images -->
+<img src="/img/photo.jpg" alt="Description" loading="lazy" />
+
+<!-- Preload critical resources -->
+<link rel="preload" href="/fonts/main.woff2" as="font" type="font/woff2" crossorigin>
+
+<!-- Async/defer scripts -->
+<script src="/js/main.js" defer></script>
+```
+
+## Interactive Elements
+
+HTML provides many built-in interactive elements that don't require JavaScript:
+
+### Details Accordion
+
+The `<details>` element creates collapsible content without JavaScript:
+
+```html
+<details>
+  <summary>Click to expand</summary>
+  <p>This content will be shown when expanded.</p>
+</details>
+```
+
+You can even create accordion-style components by grouping `<details>` elements with the same `name` attribute:
+
+```html
+<details name="accordion">
+  <summary>Section 1</summary>
+  <p>Content of section 1.</p>
+</details>
+
+<details name="accordion">
+  <summary>Section 2</summary>
+  <p>Content of section 2.</p>
+</details>
+```
+
+## Security Considerations
+
+When using `target="_blank"` to open links in new tabs, always include security attributes to protect your users:
+
+```html
+<!-- Bad: susceptible to tabnabbing -->
+<a href="https://external.com" target="_blank">
+  External link
+</a>
+
+<!-- Good: secure external link -->
+<a href="https://external.com" target="_blank" rel="noopener noreferrer">
+  External link
+</a>
+```
+
+The `rel="noopener noreferrer"` attribute prevents the new tab from gaining access to your page via `Window.opener`, protecting against tabnabbing attacks.
+
+## Next Steps
+
+Explore the documentation to learn more about:
+
+- **Head Basics**: Essential metadata and SEO tags for your `<head>` element
+- **Best Practices**: Industry-standard approaches to HTML development
+- **Code Examples**: Real-world snippets from production websites
+
+Start building accessible, performant, and secure web pages with HTML!

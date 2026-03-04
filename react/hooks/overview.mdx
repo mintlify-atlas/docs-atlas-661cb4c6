@@ -1,0 +1,250 @@
+---
+title: React Hooks Overview
+description: A collection of reusable custom hooks for React 18
+---
+
+Custom hooks are one of React's most powerful features, allowing you to extract component logic into reusable functions. This collection provides production-ready custom hooks for common patterns.
+
+## What Are Custom Hooks?
+
+Custom hooks are JavaScript functions that:
+- Start with the word "use"
+- Can call other React hooks
+- Enable logic reuse across components
+- Follow the Rules of Hooks
+
+```jsx
+// A simple custom hook example
+const useDocumentTitle = (title) => {
+  React.useEffect(() => {
+    document.title = title;
+  }, [title]);
+};
+```
+
+## Hook Categories
+
+<CardGroup cols={2}>
+  <Card title="Effect Hooks" icon="clock">
+    Manage side effects and timing
+    - `useInterval` - Declarative intervals
+    - `useTimeout` - Declarative timeouts
+    - `useEffectOnce` - Run effects once on condition
+  </Card>
+  
+  <Card title="Event Hooks" icon="hand-pointer">
+    Handle DOM and user events
+    - `useClickOutside` - Detect outside clicks
+    - `useClickInside` - Detect inside clicks
+  </Card>
+  
+  <Card title="Network Hooks" icon="network-wired">
+    Manage network requests
+    - `useFetch` - Declarative fetch API
+    - Request state management
+    - Abort controller integration
+  </Card>
+  
+  <Card title="Observer Hooks" icon="eye">
+    Watch DOM and element changes
+    - `useMutationObserver` - DOM change detection
+    - `useIntersectionObserver` - Visibility tracking
+  </Card>
+</CardGroup>
+
+## Featured Hooks
+
+### useInterval - Declarative Intervals
+
+Manage intervals in a React-friendly way with proper cleanup and fresh closures.
+
+```jsx
+const useInterval = (callback, delay) => {
+  const savedCallback = React.useRef();
+
+  React.useEffect(() => {
+    savedCallback.current = callback;
+  }, [callback]);
+
+  React.useEffect(() => {
+    const tick = () => {
+      savedCallback.current();
+    }
+    if (delay !== null) {
+      let id = setInterval(tick, delay);
+      return () => clearInterval(id);
+    }
+  }, [delay]);
+};
+```
+
+<Accordion title="Why use useRef for the callback?">
+  The `useRef` hook ensures that the interval always has access to the latest callback function without recreating the interval every time the callback changes. This solves the closure problem common with `setInterval`.
+</Accordion>
+
+### useFetch - Declarative Data Fetching
+
+Fetch data declaratively with built-in loading states and abort controller support.
+
+```jsx
+const useFetch = (url, options) => {
+  const [response, setResponse] = React.useState(null);
+  const [error, setError] = React.useState(null);
+  const [abort, setAbort] = React.useState(() => {});
+
+  React.useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const abortController = new AbortController();
+        const signal = abortController.signal;
+        setAbort(abortController.abort);
+        const res = await fetch(url, {...options, signal});
+        const json = await res.json();
+        setResponse(json);
+      } catch (error) {
+        setError(error);
+      }
+    };
+    fetchData();
+    return () => {
+      abort();
+    }
+  }, []);
+
+  return { response, error, abort };
+};
+```
+
+<Tip>
+  The `useFetch` hook includes an abort controller to cancel requests when the component unmounts, preventing memory leaks and race conditions.
+</Tip>
+
+### useClickOutside - Outside Click Detection
+
+Detect when a user clicks outside a specific element - perfect for dropdowns and modals.
+
+```jsx
+const useClickOutside = (ref, callback) => {
+  const handleClick = e => {
+    if (ref.current && !ref.current.contains(e.target)) {
+      callback();
+    }
+  };
+  React.useEffect(() => {
+    document.addEventListener('click', handleClick);
+
+    return () => {
+      document.removeEventListener('click', handleClick);
+    };
+  });
+};
+```
+
+### useMutationObserver - DOM Change Detection
+
+Watch for changes in the DOM tree using the MutationObserver API.
+
+```jsx
+const useMutationObserver = (
+  ref,
+  callback,
+  options = {
+    attributes: true,
+    characterData: true,
+    childList: true,
+    subtree: true,
+  }
+) => {
+  React.useEffect(() => {
+    if (ref.current) {
+      const observer = new MutationObserver(callback);
+      observer.observe(ref.current, options);
+      return () => observer.disconnect();
+    }
+  }, [callback, options]);
+};
+```
+
+## Lifecycle Hook Equivalents
+
+Replicate class component lifecycle methods using hooks:
+
+<Tabs>
+  <Tab title="componentDidMount">
+    ```jsx
+    const useComponentDidMount = onMountHandler => {
+      React.useEffect(() => {
+        onMountHandler();
+      }, []);
+    };
+    ```
+  </Tab>
+  
+  <Tab title="componentDidUpdate">
+    ```jsx
+    const useComponentDidUpdate = (callback, condition) => {
+      const mounted = React.useRef(false);
+      React.useEffect(() => {
+        if (mounted.current) callback();
+        else mounted.current = true;
+      }, condition);
+    };
+    ```
+  </Tab>
+  
+  <Tab title="componentWillUnmount">
+    ```jsx
+    const useComponentWillUnmount = onUnmountHandler => {
+      React.useEffect(
+        () => () => {
+          onUnmountHandler();
+        },
+        []
+      );
+    };
+    ```
+  </Tab>
+</Tabs>
+
+## Best Practices
+
+<CardGroup cols={2}>
+  <Card title="Dependency Arrays" icon="list">
+    Always include all dependencies in your effect dependency arrays to avoid stale closures.
+  </Card>
+  
+  <Card title="Cleanup Functions" icon="broom">
+    Return cleanup functions from effects to prevent memory leaks, especially for event listeners and timers.
+  </Card>
+  
+  <Card title="useRef for Mutability" icon="box">
+    Use `useRef` when you need mutable values that don't trigger re-renders.
+  </Card>
+  
+  <Card title="Custom Hook Naming" icon="tag">
+    Always prefix custom hooks with "use" to follow React conventions and enable linting.
+  </Card>
+</CardGroup>
+
+## Next Steps
+
+<Steps>
+  <Step title="View Examples">
+    Check out [Hook Examples](/react/hooks/examples) for complete, working implementations with usage demos.
+  </Step>
+  
+  <Step title="Explore Components">
+    See how these hooks are used in [React Components](/react/components/overview).
+  </Step>
+  
+  <Step title="Learn Testing">
+    Discover how to test custom hooks in the [Testing section](/react/testing/overview).
+  </Step>
+</Steps>
+
+<Warning>
+  Remember the Rules of Hooks:
+  1. Only call hooks at the top level
+  2. Only call hooks from React functions
+  3. Custom hooks can call other hooks
+</Warning>

@@ -1,0 +1,178 @@
+---
+title: JavaScript Objects Guide
+description: Master JavaScript object manipulation, cloning, and property handling
+---
+
+# JavaScript Objects
+
+Objects are the foundation of JavaScript. Understanding how to work with them effectively is essential for writing quality code.
+
+## Understanding Object Mutability
+
+JavaScript's primitive data types are immutable, meaning their value cannot change once created. However, **objects and arrays are mutable**, allowing their value to be altered after creation.
+
+What this means in practice is that primitives are passed by value, whereas objects and arrays are **passed by reference**.
+
+```javascript
+let str = 'Hello';
+let copy = str;
+copy = 'Hi';
+// str = 'Hello', copy = 'Hi'
+
+let obj = { a: 1, b: 2 };
+let objCopy = obj;
+objCopy.b = 4;
+// obj = { a: 1, b: 4}, objCopy = { a: 1, b: 4 }
+```
+
+As you can see, the object is passed by reference to `objCopy`. Changing one of the variables will affect the other one, as they **both reference the same object**.
+
+<Warning>
+  When you assign an object to a new variable, you're copying the reference, not the object itself. Both variables point to the same object in memory.
+</Warning>
+
+## Shallow Cloning
+
+Using the spread operator (`...`) or `Object.assign()`, we can clone the object and create a new one from its properties.
+
+```javascript
+const shallowClone = obj => Object.assign({}, obj);
+
+let obj = { a: 1, b: 2};
+let clone = shallowClone(obj);
+let otherClone = shallowClone(obj);
+
+clone.b = 4;
+otherClone.b = 6;
+// obj = { a: 1, b: 2}
+// clone = { a: 1, b: 4 }
+// otherClone = { a: 1, b: 6 }
+```
+
+This technique is known as **shallow cloning**, as it will work for the outer (shallow) object, but fail if we have nested (deep) objects which will ultimately be passed by reference.
+
+### Using Spread Operator
+
+```javascript
+const clone = { ...obj };
+```
+
+### Using Object.assign()
+
+```javascript
+const clone = Object.assign({}, obj);
+```
+
+## Deep Cloning
+
+In order to create a **deep clone** of an object, we need to recursively clone every nested object, cloning nested objects and arrays along the way.
+
+<Warning>
+  Some solutions around the web use `JSON.stringify()` and `JSON.parse()`. While this approach might work in some cases, it's plagued by numerous issues and performance problems, so avoid using it.
+</Warning>
+
+### Manual Deep Clone Implementation
+
+Starting with the edge cases, we need to check if the passed object is `null` and, if so, return `null`. Otherwise, we can use `Object.assign()` and an empty object (`{}`) to create a shallow clone of the original.
+
+```javascript
+const deepClone = obj => {
+  if (obj === null) return null;
+  let clone = Object.assign({}, obj);
+  Object.keys(clone).forEach(
+    key =>
+      (clone[key] =
+        typeof obj[key] === 'object' ? deepClone(obj[key]) : obj[key])
+  );
+  if (Array.isArray(obj)) {
+    clone.length = obj.length;
+    return Array.from(clone);
+  }
+  return clone;
+};
+
+const a = { foo: 'bar', obj: { a: 1, b: 2 } };
+const b = deepClone(a); // a !== b, a.obj !== b.obj
+```
+
+<Note>
+  This code snippet is designed specifically with plain objects and arrays in mind. It can't handle class instances, functions, and other special cases.
+</Note>
+
+## Deep Cloning with structuredClone()
+
+JavaScript introduced the `structuredClone()` global function, which can be used to **deep clone objects**. Instead of implementing a complicated recursive function, we can simply use this function to clone the object.
+
+```javascript
+const a = { x: 1, y: { y1: 'a' }, z: new Set([1, 2]) };
+const b = structuredClone(a); // a !== b, a.y !== b.y, a.z !== b.z
+```
+
+This technique can be used for both **arrays and objects**, requires minimal code and is the recommended way of cloning objects in JavaScript, as it's the most **performant and reliable**.
+
+<Tip>
+  The `structuredClone()` function is supported by all modern browsers and Node.js since v17.0.0. This is the recommended approach for deep cloning.
+</Tip>
+
+## When to Use Each Method
+
+<AccordionGroup>
+  <Accordion title="Shallow Clone - Spread Operator">
+    Use `{ ...obj }` when:
+    - You only need to clone the top level
+    - The object doesn't have nested objects
+    - You need readable, concise code
+  </Accordion>
+  <Accordion title="Shallow Clone - Object.assign()">
+    Use `Object.assign({}, obj)` when:
+    - You need to merge multiple objects
+    - You want to be explicit about cloning
+    - Compatibility with older code
+  </Accordion>
+  <Accordion title="Deep Clone - structuredClone()">
+    Use `structuredClone(obj)` when:
+    - You need to clone nested objects/arrays
+    - You want the best performance
+    - You need to clone complex structures like Sets, Maps, Dates
+  </Accordion>
+  <Accordion title="Deep Clone - Custom Implementation">
+    Use a custom `deepClone()` when:
+    - You need to support older environments
+    - You need custom cloning logic
+    - You need to handle special cases
+  </Accordion>
+</AccordionGroup>
+
+## Common Object Operations
+
+### Check if Object is Empty
+
+```javascript
+const isEmpty = obj => Object.keys(obj).length === 0;
+
+isEmpty({}); // true
+isEmpty({ a: 1 }); // false
+```
+
+### Merge Objects
+
+```javascript
+const obj1 = { a: 1, b: 2 };
+const obj2 = { b: 3, c: 4 };
+const merged = { ...obj1, ...obj2 };
+// { a: 1, b: 3, c: 4 }
+```
+
+### Pick Properties
+
+```javascript
+const pick = (obj, keys) =>
+  keys.reduce((acc, key) => {
+    if (obj.hasOwnProperty(key)) acc[key] = obj[key];
+    return acc;
+  }, {});
+
+const user = { id: 1, name: 'Alice', email: 'alice@example.com', age: 25 };
+pick(user, ['name', 'email']);
+// { name: 'Alice', email: 'alice@example.com' }
+```

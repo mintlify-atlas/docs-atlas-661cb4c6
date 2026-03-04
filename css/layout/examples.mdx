@@ -1,0 +1,284 @@
+---
+title: CSS Layout Examples
+description: Practical examples of modern CSS layout techniques with complete code samples.
+---
+
+# CSS Layout Examples
+
+This page demonstrates real-world layout patterns using modern CSS techniques. Each example includes complete HTML and CSS code that you can use in your projects.
+
+## Centering Content
+
+Centering a div has become somewhat of a joke in web development, but modern CSS makes it straightforward. Here are four proven methods.
+
+### Flexbox Centering (Recommended)
+
+Using flexbox to vertically and horizontally center content is usually the preferred method. It requires just three lines of code.
+
+```html
+<div class="flexbox-centering">
+  <div class="content">Content</div>
+</div>
+```
+
+```css
+.flexbox-centering {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+```
+
+**What it does:** Creates a flex container that centers its child both horizontally and vertically within the available space.
+
+### Grid Centering
+
+The grid module works similarly to flexbox and is a common choice when you're already using grid in your layout.
+
+```html
+<div class="grid-centering">
+  <div class="content">Content</div>
+</div>
+```
+
+```css
+.grid-centering {
+  display: grid;
+  justify-content: center;
+  align-items: center;
+}
+```
+
+**What it does:** Creates a grid container that centers its child using the same alignment properties as flexbox.
+
+### Transform Centering
+
+Transform centering uses CSS transforms and absolute positioning to center an element.
+
+```html
+<div class="transform-centering">
+  <div class="content">Content</div>
+</div>
+```
+
+```css
+.transform-centering {
+  position: relative;
+}
+
+.transform-centering > .content {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
+```
+
+**What it does:** Positions the element at 50% from top and left, then uses transform to offset it by half its own dimensions, achieving perfect centering.
+
+### Table Centering
+
+Table centering is an older technique useful when working with legacy browsers.
+
+```html
+<div class="table-centering">
+  <div class="content">Content</div>
+</div>
+```
+
+```css
+.table-centering {
+  display: table;
+  height: 100%;
+  width: 100%;
+}
+
+.table-centering > .content {
+  display: table-cell;
+  text-align: center;
+  vertical-align: middle;
+}
+```
+
+**What it does:** Makes the container behave like a table element, allowing the use of `vertical-align: middle` for centering. Requires fixed width and height on parent.
+
+## Box-Sizing Reset
+
+Reset the box-model so that `width` and `height` are not affected by `border` or `padding`.
+
+```html
+<div class="box">border-box</div>
+<div class="box content-box">content-box</div>
+```
+
+```css
+/* Reset the box-model */
+div {
+  box-sizing: border-box;
+}
+
+/* Pass down the box-sizing property */
+*,
+*::before,
+*::after {
+  box-sizing: inherit;
+}
+
+/* Example usage */
+.box {
+  display: inline-block;
+  width: 120px;
+  height: 120px;
+  padding: 8px;
+  margin: 8px;
+  background: #F24333;
+  color: white;
+  border: 1px solid #BA1B1D;
+  border-radius: 4px;
+}
+
+/* Override the box-sizing property */
+.content-box {
+  box-sizing: content-box;
+}
+```
+
+**What it does:** 
+- The first box uses `border-box`, so padding and border are included in the 120px width/height
+- The second box uses `content-box` (browser default), so padding and border are added to the 120px, making it larger
+- This demonstrates why `border-box` is generally preferred for predictable layouts
+
+## Evenly Distributed Children
+
+Distribute child elements evenly within a parent element using Flexbox.
+
+```css
+.evenly-distributed-children {
+  display: flex;
+  justify-content: space-between;
+}
+
+.evenly-spaced-children {
+  display: flex;
+  justify-content: space-around;
+}
+```
+
+**What it does:**
+- `space-between`: First item at start edge, last item at end edge, equal space between items
+- `space-around`: Equal space around each item, with half-space at the edges
+
+Works with both horizontal (`flex-direction: row`) and vertical (`flex-direction: column`) containers.
+
+## Footer at the Bottom
+
+Ensure the footer stays at the bottom of the page, even when content is short.
+
+```html
+<body>
+  <main><!-- Main content --></main>
+  <footer><!-- Footer content --></footer>
+</body>
+```
+
+### Using Flexbox
+
+```css
+body {
+  /* Fallback for browsers that don't support dvh */
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+}
+
+footer {
+  margin-top: auto;
+}
+```
+
+**What it does:** 
+- Body becomes a flex container spanning the full viewport height
+- `margin-top: auto` on footer pushes it to the bottom
+- Main content doesn't stretch, but footer is always at the bottom
+
+### Using Grid
+
+```css
+body {
+  /* Fallback for browsers that don't support dvh */
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: grid;
+  grid-template-rows: 1fr auto;
+}
+```
+
+**What it does:**
+- Creates a grid with two rows
+- First row (main) gets `1fr` - fills available space
+- Second row (footer) gets `auto` - only takes space it needs
+- Footer is always at the bottom, main stretches to fill
+
+## Flexbox Cheat Sheet
+
+### Container Properties
+
+```css
+.flex-container {
+  display: flex; /* or inline-flex */
+  
+  /* Direction */
+  flex-direction: row; /* row | row-reverse | column | column-reverse */
+  
+  /* Wrapping */
+  flex-wrap: nowrap; /* nowrap | wrap | wrap-reverse */
+  
+  /* Main axis alignment */
+  justify-content: flex-start; /* flex-start | flex-end | center | space-between | space-around | space-evenly */
+  
+  /* Cross axis alignment */
+  align-items: stretch; /* flex-start | flex-end | center | baseline | stretch */
+  
+  /* Multi-line alignment */
+  align-content: stretch; /* flex-start | flex-end | center | space-between | space-around | stretch */
+  
+  /* Spacing */
+  gap: 1rem; /* Spacing between items */
+}
+```
+
+### Item Properties
+
+```css
+.flex-item {
+  /* Growth */
+  flex-grow: 0; /* Default: 0 */
+  
+  /* Shrinking */
+  flex-shrink: 1; /* Default: 1 */
+  
+  /* Base size */
+  flex-basis: auto; /* auto | length */
+  
+  /* Shorthand */
+  flex: 0 1 auto; /* flex-grow flex-shrink flex-basis */
+  
+  /* Individual alignment */
+  align-self: auto; /* auto | flex-start | flex-end | center | baseline | stretch */
+  
+  /* Order */
+  order: 0; /* Integer value */
+}
+```
+
+## Tips and Best Practices
+
+1. **Use Flexbox for one-dimensional layouts** - When arranging items in a single row or column
+2. **Use Grid for two-dimensional layouts** - When you need control over both rows and columns
+3. **Always include box-sizing reset** - Makes sizing more predictable
+4. **Use modern viewport units with fallbacks** - `dvh` and `dvw` with `vh` and `vw` fallbacks
+5. **Test responsive behavior** - Verify layouts work at various viewport sizes
+6. **Consider accessibility** - Avoid using `order` property, as it can confuse screen readers
+
+These layout patterns form the foundation of modern web design and can be combined to create complex, responsive interfaces.

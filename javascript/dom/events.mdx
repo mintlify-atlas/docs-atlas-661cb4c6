@@ -1,0 +1,424 @@
+---
+title: DOM Events in JavaScript
+description: Learn how to handle events, create custom events, and master event delegation
+---
+
+# DOM Events
+
+Events are actions or occurrences that happen in the browser, which you can respond to with JavaScript. Understanding events is crucial for creating interactive web applications.
+
+## Adding Event Listeners
+
+In order to add an event listener to an element, you can use the `EventTarget.addEventListener()` method. Yet, in some cases, adding a listener for every single element can be a bit of a performance hit.
+
+### Basic Event Listener
+
+```javascript
+const button = document.getElementById('my-button');
+
+button.addEventListener('click', (event) => {
+  console.log('Button clicked!');
+  console.log('Event:', event);
+});
+```
+
+### Event Delegation
+
+In these cases, you can use event delegation to add a single event listener to a parent element and then check if the event target matches the target you're looking for.
+
+```javascript
+const on = (el, evt, fn, opts = {}) => {
+  const delegatorFn = e =>
+    e.target.matches(opts.target) && fn.call(e.target, e);
+  el.addEventListener(
+    evt,
+    opts.target ? delegatorFn : fn,
+    opts.options || false
+  );
+  if (opts.target) return delegatorFn;
+};
+
+const fn = () => console.log('!');
+
+on(document.body, 'click', fn);
+// logs '!' upon clicking the `body` element
+
+on(document.body, 'click', fn, { target: 'p' });
+// logs '!' upon clicking a `p` element child of the `body` element
+
+on(document.body, 'click', fn, { options: true });
+// logs '!' upon clicking on the `body` element,
+//   but uses capturing instead of bubbling
+
+on(document.body, 'click', fn, { target: 'p', options: { once: true} });
+// logs '!' upon clicking a `p` element child of the `body` element,
+//   but only once
+```
+
+<Tip>
+  Event delegation is more efficient when you have many elements with the same event listener, as it requires only one listener instead of many.
+</Tip>
+
+## Removing Event Listeners
+
+Removing an event listener from an element is as easy as adding one. You can use the `EventTarget.removeEventListener()` method to remove an event listener from an element.
+
+```javascript
+const off = (el, evt, fn, opts = false) =>
+  el.removeEventListener(evt, fn, opts);
+
+const fn = () => console.log('!');
+
+document.body.addEventListener('click', fn);
+off(document.body, 'click', fn);
+// no longer logs '!' upon clicking on the page
+
+const delegatorFn =
+  on(document.body, 'click', fn, { target: 'p' });
+off(document.body, 'click', delegatorFn);
+// no longer logs '!' upon clicking a `p` element child of the `body` element
+
+const delegatorFnCapturing =
+  on(document.body, 'click', fn, { options: true });
+off(document.body, 'click', delegatorFnCapturing, { options: true });
+// no longer logs '!' upon clicking on the page
+//   (capturing instead of bubbling example)
+```
+
+<Note>
+  You must pass the same function reference to `removeEventListener` that you passed to `addEventListener`. Arrow functions and anonymous functions won't work for removal.
+</Note>
+
+## Common Events
+
+### Mouse Events
+
+```javascript
+const element = document.getElementById('my-element');
+
+element.addEventListener('click', (e) => {
+  console.log('Clicked at:', e.clientX, e.clientY);
+});
+
+element.addEventListener('dblclick', (e) => {
+  console.log('Double clicked');
+});
+
+element.addEventListener('mouseenter', (e) => {
+  console.log('Mouse entered');
+});
+
+element.addEventListener('mouseleave', (e) => {
+  console.log('Mouse left');
+});
+
+element.addEventListener('mousemove', (e) => {
+  console.log('Mouse position:', e.clientX, e.clientY);
+});
+
+element.addEventListener('contextmenu', (e) => {
+  e.preventDefault(); // Prevent default context menu
+  console.log('Right clicked');
+});
+```
+
+### Keyboard Events
+
+```javascript
+document.addEventListener('keydown', (e) => {
+  console.log('Key pressed:', e.key);
+  console.log('Key code:', e.code);
+  
+  // Check for modifier keys
+  if (e.ctrlKey && e.key === 's') {
+    e.preventDefault();
+    console.log('Ctrl+S pressed');
+  }
+});
+
+document.addEventListener('keyup', (e) => {
+  console.log('Key released:', e.key);
+});
+
+input.addEventListener('keypress', (e) => {
+  console.log('Character entered:', e.key);
+});
+```
+
+### Form Events
+
+```javascript
+const form = document.getElementById('my-form');
+const input = document.getElementById('my-input');
+
+form.addEventListener('submit', (e) => {
+  e.preventDefault(); // Prevent form submission
+  console.log('Form submitted');
+});
+
+input.addEventListener('input', (e) => {
+  console.log('Value changed:', e.target.value);
+});
+
+input.addEventListener('change', (e) => {
+  console.log('Input changed:', e.target.value);
+});
+
+input.addEventListener('focus', (e) => {
+  console.log('Input focused');
+});
+
+input.addEventListener('blur', (e) => {
+  console.log('Input blurred');
+});
+```
+
+### Window Events
+
+```javascript
+window.addEventListener('load', () => {
+  console.log('Page fully loaded');
+});
+
+window.addEventListener('resize', () => {
+  console.log('Window resized:', window.innerWidth, window.innerHeight);
+});
+
+window.addEventListener('scroll', () => {
+  console.log('Scrolled to:', window.scrollY);
+});
+
+window.addEventListener('beforeunload', (e) => {
+  e.preventDefault();
+  e.returnValue = ''; // Required for showing confirmation dialog
+});
+```
+
+## Triggering Custom Events
+
+JavaScript's `EventTarget.dispatchEvent()` method allows you to trigger an event programmatically. This method accepts an `Event` object as its only argument, which can be created using the `CustomEvent` constructor.
+
+### Basic Custom Event
+
+```javascript
+const triggerEvent = (el, eventType, detail) =>
+  el.dispatchEvent(new CustomEvent(eventType, { detail }));
+
+const myElement = document.getElementById('my-element');
+myElement.addEventListener('click', e => console.log(e.detail));
+
+triggerEvent(myElement, 'click');
+// The event listener will log: null
+
+triggerEvent(myElement, 'click', { username: 'bob' });
+// The event listener will log: { username: 'bob' }
+```
+
+The `CustomEvent` constructor allows you to pass custom data to the event listener through the `detail` property.
+
+### Custom Event with Options
+
+```javascript
+const customEvent = new CustomEvent('userLogin', {
+  detail: { username: 'alice', timestamp: Date.now() },
+  bubbles: true,
+  cancelable: true
+});
+
+document.dispatchEvent(customEvent);
+
+// Listen anywhere in the document
+document.addEventListener('userLogin', (e) => {
+  console.log('User logged in:', e.detail.username);
+});
+```
+
+## Event Object Properties
+
+### Common Properties
+
+```javascript
+element.addEventListener('click', (event) => {
+  console.log('Type:', event.type);                    // 'click'
+  console.log('Target:', event.target);                // Element that triggered event
+  console.log('Current target:', event.currentTarget); // Element with listener
+  console.log('Timestamp:', event.timeStamp);          // When event occurred
+  console.log('Bubbles:', event.bubbles);              // Whether event bubbles
+  console.log('Cancelable:', event.cancelable);        // Whether event can be canceled
+});
+```
+
+### Mouse Event Properties
+
+```javascript
+element.addEventListener('click', (event) => {
+  console.log('Client X/Y:', event.clientX, event.clientY); // Relative to viewport
+  console.log('Page X/Y:', event.pageX, event.pageY);       // Relative to document
+  console.log('Screen X/Y:', event.screenX, event.screenY); // Relative to screen
+  console.log('Button:', event.button);                     // Which mouse button (0=left, 1=middle, 2=right)
+  console.log('Ctrl key:', event.ctrlKey);                  // Whether Ctrl was pressed
+  console.log('Shift key:', event.shiftKey);                // Whether Shift was pressed
+  console.log('Alt key:', event.altKey);                    // Whether Alt was pressed
+});
+```
+
+### Keyboard Event Properties
+
+```javascript
+document.addEventListener('keydown', (event) => {
+  console.log('Key:', event.key);           // 'a', 'Enter', 'ArrowUp', etc.
+  console.log('Code:', event.code);         // 'KeyA', 'Enter', 'ArrowUp', etc.
+  console.log('Key code:', event.keyCode);  // Deprecated, use 'code' instead
+  console.log('Ctrl:', event.ctrlKey);      // Whether Ctrl was pressed
+  console.log('Shift:', event.shiftKey);    // Whether Shift was pressed
+  console.log('Alt:', event.altKey);        // Whether Alt was pressed
+  console.log('Repeat:', event.repeat);     // Whether key is being held down
+});
+```
+
+## Event Methods
+
+### preventDefault()
+
+Prevents the default action of the event:
+
+```javascript
+link.addEventListener('click', (e) => {
+  e.preventDefault();
+  console.log('Link click prevented');
+});
+
+form.addEventListener('submit', (e) => {
+  e.preventDefault();
+  console.log('Form submission prevented');
+});
+```
+
+### stopPropagation()
+
+Stops the event from bubbling up the DOM tree:
+
+```javascript
+child.addEventListener('click', (e) => {
+  e.stopPropagation();
+  console.log('Child clicked, event won\'t bubble to parent');
+});
+
+parent.addEventListener('click', () => {
+  console.log('This won\'t be called when child is clicked');
+});
+```
+
+### stopImmediatePropagation()
+
+Stops event bubbling and prevents other listeners on the same element:
+
+```javascript
+element.addEventListener('click', (e) => {
+  e.stopImmediatePropagation();
+  console.log('First listener');
+});
+
+element.addEventListener('click', () => {
+  console.log('This won\'t be called');
+});
+```
+
+## Event Options
+
+### Capture Phase
+
+```javascript
+// Event fires during capture phase (top to bottom)
+element.addEventListener('click', handler, true);
+
+// Or with options object
+element.addEventListener('click', handler, { capture: true });
+```
+
+### Once
+
+```javascript
+// Event listener is removed after first invocation
+element.addEventListener('click', handler, { once: true });
+```
+
+### Passive
+
+```javascript
+// Tells browser the listener won't call preventDefault()
+// Improves scroll performance
+element.addEventListener('scroll', handler, { passive: true });
+```
+
+## Practical Examples
+
+### Debounced Scroll Handler
+
+```javascript
+let scrollTimeout;
+window.addEventListener('scroll', () => {
+  clearTimeout(scrollTimeout);
+  scrollTimeout = setTimeout(() => {
+    console.log('Scroll ended at:', window.scrollY);
+  }, 150);
+});
+```
+
+### Click Outside to Close
+
+```javascript
+const modal = document.getElementById('modal');
+const modalContent = modal.querySelector('.modal-content');
+
+modal.addEventListener('click', (e) => {
+  if (!modalContent.contains(e.target)) {
+    modal.style.display = 'none';
+  }
+});
+```
+
+### Keyboard Shortcuts
+
+```javascript
+const shortcuts = {
+  'ctrl+s': () => console.log('Save'),
+  'ctrl+o': () => console.log('Open'),
+  'ctrl+p': () => console.log('Print'),
+};
+
+document.addEventListener('keydown', (e) => {
+  const key = [
+    e.ctrlKey && 'ctrl',
+    e.shiftKey && 'shift',
+    e.altKey && 'alt',
+    e.key.toLowerCase()
+  ].filter(Boolean).join('+');
+
+  const handler = shortcuts[key];
+  if (handler) {
+    e.preventDefault();
+    handler();
+  }
+});
+```
+
+## Best Practices
+
+<AccordionGroup>
+  <Accordion title="Use event delegation for dynamic content">
+    When elements are added/removed dynamically, event delegation ensures events work without re-attaching listeners.
+  </Accordion>
+  <Accordion title="Remove event listeners when done">
+    Always remove event listeners when elements are destroyed or components unmount to prevent memory leaks.
+  </Accordion>
+  <Accordion title="Use passive listeners for scroll/touch">
+    Mark scroll and touch event listeners as passive to improve performance, unless you need preventDefault().
+  </Accordion>
+  <Accordion title="Don't use inline event handlers">
+    Avoid `onclick="..."` in HTML. Use addEventListener in JavaScript for better separation of concerns.
+  </Accordion>
+  <Accordion title="Throttle/debounce expensive handlers">
+    For events that fire frequently (scroll, resize, mousemove), use throttling or debouncing to limit execution.
+  </Accordion>
+</AccordionGroup>

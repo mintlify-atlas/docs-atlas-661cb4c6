@@ -1,0 +1,410 @@
+---
+title: Regular Expressions in JavaScript
+description: Master regular expressions with practical examples and common patterns
+---
+
+# Regular Expressions
+
+Regular expressions (regex) are patterns used to match character combinations in strings. They're powerful tools for text processing, validation, and manipulation.
+
+## Basic Syntax
+
+```javascript
+// Literal notation
+const regex1 = /pattern/flags;
+
+// Constructor notation
+const regex2 = new RegExp('pattern', 'flags');
+
+// Example
+const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const phoneRegex = new RegExp('^\\d{3}-\\d{3}-\\d{4}$');
+```
+
+## Common Flags
+
+```javascript
+/pattern/g   // Global - find all matches
+/pattern/i   // Case-insensitive
+/pattern/m   // Multiline - ^ and $ match line starts/ends
+/pattern/s   // Dotall - . matches newlines
+/pattern/u   // Unicode
+/pattern/y   // Sticky - match from lastIndex position
+
+// Combine flags
+/pattern/gi  // Global and case-insensitive
+```
+
+## Basic Patterns
+
+### Exact String Match
+
+Use the `^` and `$` anchors to match the start and end of the string:
+
+```javascript
+const regexp = /^abc$/;
+// Where 'abc' is the exact string you want to match
+
+'abc'.match(regexp);    // ['abc']
+'abcd'.match(regexp);   // null
+'xabc'.match(regexp);   // null
+```
+
+### Match Empty String
+
+```javascript
+const regexp = /^$/;
+
+''.match(regexp);       // ['']
+'hello'.match(regexp);  // null
+```
+
+### Match Whitespace Sequences
+
+Use the `\s` meta-sequence to match any whitespace character:
+
+```javascript
+const regexp = /\s+/g;
+
+'hello  world\t\nfoo'.match(regexp);
+// ['  ', '\t\n']
+```
+
+### Match Line Breaks
+
+```javascript
+const regexp = /\r|\n|\r\n/gm;
+
+const text = 'line1\nline2\r\nline3\rline4';
+text.split(regexp);
+// ['line1', 'line2', 'line3', 'line4']
+```
+
+## Character Classes
+
+### Match Non-Word Characters
+
+```javascript
+const regexp = /[^\w\s]/gi;
+
+'Hello, World!'.replace(regexp, '');
+// 'Hello World'
+```
+
+### Match Alphanumeric, Dashes and Hyphens
+
+Particularly useful when matching URL slugs:
+
+```javascript
+const regexp = /^[a-zA-Z0-9-_]+$/;
+
+regexp.test('hello-world_123'); // true
+regexp.test('hello world');     // false
+regexp.test('hello@world');     // false
+```
+
+### Match Letters and Whitespaces
+
+```javascript
+const regexp = /^[A-Za-z\s]+$/;
+
+regexp.test('John Doe');      // true
+regexp.test('John Doe 123');  // false
+```
+
+## Advanced Patterns
+
+### Lookaheads
+
+Pattern not included:
+
+```javascript
+const regexp = /^((?!(abc|bcd)).)*$/;
+// Matches any string that doesn't contain 'abc' or 'bcd'
+
+regexp.test('hello world');  // true
+regexp.test('hello abc');    // false
+regexp.test('xyz bcd');      // false
+```
+
+### Text Inside Brackets
+
+```javascript
+const regexp = /\(([^)]+)\)/g;
+
+const text = 'Hello (world) and (universe)';
+const matches = [...text.matchAll(regexp)];
+matches.map(m => m[1]);
+// ['world', 'universe']
+
+// For square brackets: /\[([^\]]+)\]/g
+// For curly brackets: /\{([^}]+)\}/g
+```
+
+## Validation Patterns
+
+### Email Validation
+
+```javascript
+const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+emailRegex.test('user@example.com');     // true
+emailRegex.test('invalid.email');        // false
+emailRegex.test('user@example.co.uk');   // true
+```
+
+### Phone Number Validation
+
+```javascript
+// US phone: (123) 456-7890 or 123-456-7890
+const phoneRegex = /^\(?\d{3}\)?[- ]?\d{3}[- ]?\d{4}$/;
+
+phoneRegex.test('(123) 456-7890'); // true
+phoneRegex.test('123-456-7890');   // true
+phoneRegex.test('1234567890');     // true
+phoneRegex.test('123-45-6789');    // false
+```
+
+### URL Validation
+
+```javascript
+const urlRegex = /^https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)$/;
+
+urlRegex.test('https://example.com');           // true
+urlRegex.test('http://www.example.com/path');   // true
+urlRegex.test('not a url');                     // false
+```
+
+### Date Validation (DD/MM/YYYY)
+
+```javascript
+const dateRegex = /^(0?[1-9]|[12][0-9]|3[01])[\/\-](0?[1-9]|1[012])[\/\-]\d{4}$/;
+
+dateRegex.test('15/03/2024');  // true
+dateRegex.test('5/3/2024');    // true
+dateRegex.test('32/13/2024');  // false
+```
+
+### Password Strength
+
+```javascript
+// At least 8 chars, 1 uppercase, 1 lowercase, 1 number, 1 special char
+const strongPassword = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+
+strongPassword.test('Weak123');          // false
+strongPassword.test('Strong123!');       // true
+strongPassword.test('VeryStrong123!@');  // true
+```
+
+## Useful Methods
+
+### test()
+
+Returns boolean:
+
+```javascript
+const regex = /hello/i;
+regex.test('Hello World'); // true
+regex.test('Goodbye');     // false
+```
+
+### match()
+
+Returns array of matches:
+
+```javascript
+const text = 'The rain in Spain';
+
+// Without global flag - returns first match with groups
+text.match(/ain/);
+// ['ain', index: 5, input: 'The rain in Spain', groups: undefined]
+
+// With global flag - returns all matches
+text.match(/ain/g);
+// ['ain', 'ain']
+```
+
+### matchAll()
+
+Returns iterator of all matches with groups:
+
+```javascript
+const text = 'test1 test2 test3';
+const regex = /test(\d)/g;
+
+for (const match of text.matchAll(regex)) {
+  console.log(match[0], match[1]);
+}
+// 'test1' '1'
+// 'test2' '2'
+// 'test3' '3'
+
+// Convert to array
+const matches = [...text.matchAll(regex)];
+```
+
+### replace()
+
+Replace matches:
+
+```javascript
+const text = 'Hello World';
+
+// Simple replacement
+text.replace(/World/, 'Universe');
+// 'Hello Universe'
+
+// With callback
+text.replace(/(\w+)\s(\w+)/, (match, p1, p2) => `${p2}, ${p1}`);
+// 'World, Hello'
+
+// Global replacement
+'foo bar foo'.replace(/foo/g, 'baz');
+// 'baz bar baz'
+```
+
+### replaceAll()
+
+```javascript
+const text = 'foo bar foo baz foo';
+text.replaceAll(/foo/g, 'qux');
+// 'qux bar qux baz qux'
+```
+
+### split()
+
+```javascript
+'hello,world;foo:bar'.split(/[,;:]/);
+// ['hello', 'world', 'foo', 'bar']
+```
+
+### search()
+
+Returns index of first match:
+
+```javascript
+'hello world'.search(/world/); // 6
+'hello world'.search(/xyz/);   // -1
+```
+
+## Capture Groups
+
+### Basic Groups
+
+```javascript
+const regex = /(\d{3})-(\d{3})-(\d{4})/;
+const match = '123-456-7890'.match(regex);
+
+console.log(match[0]); // '123-456-7890' (full match)
+console.log(match[1]); // '123' (first group)
+console.log(match[2]); // '456' (second group)
+console.log(match[3]); // '7890' (third group)
+```
+
+### Named Groups
+
+```javascript
+const regex = /(?<year>\d{4})-(?<month>\d{2})-(?<day>\d{2})/;
+const match = '2024-03-15'.match(regex);
+
+console.log(match.groups.year);  // '2024'
+console.log(match.groups.month); // '03'
+console.log(match.groups.day);   // '15'
+```
+
+### Non-Capturing Groups
+
+```javascript
+// Use (?: ) for grouping without capturing
+const regex = /(?:Mr|Mrs|Ms)\.?\s(\w+)/;
+const match = 'Mr. Smith'.match(regex);
+
+console.log(match[1]); // 'Smith' (only captured group)
+```
+
+## Practical Examples
+
+### Extract All URLs
+
+```javascript
+const text = 'Visit https://example.com and http://test.com';
+const urlRegex = /https?:\/\/[^\s]+/g;
+const urls = text.match(urlRegex);
+// ['https://example.com', 'http://test.com']
+```
+
+### Chunk String into N-Size Chunks
+
+```javascript
+const chunkString = (str, size) => {
+  const regex = new RegExp(`.{1,${size}}`, 'g');
+  return str.match(regex);
+};
+
+chunkString('abcdefgh', 3);
+// ['abc', 'def', 'gh']
+```
+
+### Camel Case to Snake Case
+
+```javascript
+const camelToSnake = str =>
+  str.replace(/[A-Z]/g, letter => `_${letter.toLowerCase()}`);
+
+camelToSnake('helloWorldExample');
+// 'hello_world_example'
+```
+
+### Strip HTML Tags
+
+```javascript
+const stripHtml = html => html.replace(/<[^>]*>/g, '');
+
+stripHtml('<p>Hello <strong>World</strong></p>');
+// 'Hello World'
+```
+
+### Validate Hex Color
+
+```javascript
+const hexColorRegex = /^#?([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/;
+
+hexColorRegex.test('#FFF');      // true
+hexColorRegex.test('#FFFFFF');   // true
+hexColorRegex.test('FFFFFF');    // true
+hexColorRegex.test('#GGG');      // false
+```
+
+## Performance Tips
+
+<AccordionGroup>
+  <Accordion title="Avoid catastrophic backtracking">
+    Be careful with nested quantifiers like `(a+)+` which can cause exponential time complexity. Use possessive quantifiers or atomic groups when possible.
+  </Accordion>
+  <Accordion title="Use non-capturing groups">
+    Use `(?:...)` instead of `(...)` when you don't need to capture the match. It's slightly faster.
+  </Accordion>
+  <Accordion title="Anchor your patterns">
+    Use `^` and `$` anchors when appropriate to avoid searching the entire string.
+  </Accordion>
+  <Accordion title="Compile once, use many times">
+    Store regex patterns in variables and reuse them instead of creating new ones each time.
+  </Accordion>
+</AccordionGroup>
+
+## Best Practices
+
+<AccordionGroup>
+  <Accordion title="Keep it simple">
+    Complex regex patterns are hard to read and maintain. Break them into smaller parts or use multiple simpler patterns.
+  </Accordion>
+  <Accordion title="Comment complex patterns">
+    Use the verbose flag in other languages or add comments in your code to explain what the pattern does.
+  </Accordion>
+  <Accordion title="Test thoroughly">
+    Test regex patterns with various inputs, including edge cases, to ensure they work as expected.
+  </Accordion>
+  <Accordion title="Consider alternatives">
+    For simple operations like checking if a string contains a substring, `includes()` is often clearer than regex.
+  </Accordion>
+</AccordionGroup>

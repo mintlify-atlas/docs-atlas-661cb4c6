@@ -1,0 +1,159 @@
+---
+title: Essential JavaScript Array Methods
+description: Master the 4 must-know JavaScript array methods - map, filter, reduce, and find
+---
+
+# Essential Array Methods
+
+JavaScript arrays have a very robust API offering a plethora of amazing tools. Here are the 4 must-know JavaScript array methods every developer should know.
+
+## Array.prototype.map()
+
+[`Array.prototype.map()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/map) creates a new array by applying the provided transformation to each element of the original array. The result is an array with the **same length** as the original array and elements transformed based on the provided function.
+
+```javascript
+const arr = [1, 2, 3];
+const double = x => x * 2;
+arr.map(double); // [2, 4, 6]
+```
+
+### Use Cases
+
+- Transforming data structures
+- Converting between formats
+- Applying calculations to each element
+
+<Tip>
+  `map()` always returns a new array of the same length. If you need to filter out elements, use `filter()` instead.
+</Tip>
+
+## Array.prototype.filter()
+
+[`Array.prototype.filter()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/filter) creates a new array by using a filtering function to keep only elements that return `true` based on that function. The result is an array with **equal or less than** the original array's length, containing a subset of the same elements as the original array.
+
+```javascript
+const arr = [1, 2, 3];
+const isOdd = x => x % 2 === 1;
+arr.filter(isOdd); // [1, 3]
+```
+
+### Use Cases
+
+- Removing unwanted elements
+- Finding all matches for a condition
+- Creating subsets of data
+
+## Array.prototype.reduce()
+
+[`Array.prototype.reduce()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/Reduce) creates an output value of any type depending on a reducer function and an initial value. The result can be of **any type** such as an integer, an object or an array, based on the reducer function provided.
+
+### Basic Reduction
+
+```javascript
+const arr = [1, 2, 3];
+
+const sum = (x, y) => x + y;
+arr.reduce(sum, 0); // 6
+```
+
+### Building Complex Structures
+
+```javascript
+const arr = [1, 2, 3];
+
+const increment = (x, y) => [...x, x[x.length - 1] + y];
+arr.reduce(increment, [0]); // [0, 1, 3, 6]
+```
+
+### Use Cases
+
+- Summing or multiplying values
+- Building objects from arrays
+- Flattening nested structures
+- Implementing other array methods
+
+<Note>
+  `reduce()` is the most powerful array method. Many other array operations can be implemented using `reduce()`.
+</Note>
+
+## Array.prototype.find()
+
+[`Array.prototype.find()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/find) returns the **first element** for which a matcher function returns `true`. The result is a single element from the original array.
+
+```javascript
+const arr = [1, 2, 3];
+const isOdd = x => x % 2 === 1;
+arr.find(isOdd); // 1
+```
+
+### Use Cases
+
+- Finding a specific item in a list
+- Looking up by property value
+- Getting the first match for a condition
+
+<Tip>
+  If you need the index instead of the element, use `findIndex()`. If you need all matches, use `filter()`.
+</Tip>
+
+## Combining Methods
+
+The real power of these methods comes from combining them together:
+
+```javascript
+const users = [
+  { id: 1, name: 'Alice', age: 25, active: true },
+  { id: 2, name: 'Bob', age: 30, active: false },
+  { id: 3, name: 'Charlie', age: 35, active: true },
+  { id: 4, name: 'David', age: 28, active: true }
+];
+
+// Get names of active users over 26
+const activeUserNames = users
+  .filter(user => user.active)
+  .filter(user => user.age > 26)
+  .map(user => user.name);
+// ['Charlie']
+
+// Calculate total age of active users
+const totalAge = users
+  .filter(user => user.active)
+  .reduce((sum, user) => sum + user.age, 0);
+// 88
+
+// Find first user over 30
+const seniorUser = users.find(user => user.age > 30);
+// { id: 3, name: 'Charlie', age: 35, active: true }
+```
+
+## Method Comparison
+
+<AccordionGroup>
+  <Accordion title="map() vs forEach()">
+    `map()` returns a new array with transformed values, while `forEach()` returns `undefined` and is used for side effects. Use `map()` when you need the results, `forEach()` when you just need to iterate.
+  </Accordion>
+  <Accordion title="filter() vs find()">
+    `filter()` returns all matching elements in a new array, while `find()` returns only the first match. Use `filter()` for multiple results, `find()` for a single result.
+  </Accordion>
+  <Accordion title="reduce() vs other methods">
+    `reduce()` is the most flexible method and can implement most other array operations. However, use specific methods like `map()` or `filter()` when they're more readable.
+  </Accordion>
+</AccordionGroup>
+
+## Performance Tips
+
+1. **Avoid chaining too many methods** - Each method creates a new array
+2. **Use `reduce()` for multiple operations** - Can be more efficient than chaining
+3. **Consider using a `for` loop** for performance-critical code
+4. **Break early when possible** - Use `find()` or `some()` instead of `filter()[0]`
+
+```javascript
+// Less efficient - creates intermediate array
+const result = arr
+  .filter(x => x > 10)
+  .map(x => x * 2)[0];
+
+// More efficient - stops at first match
+const result = arr
+  .find(x => x > 10) * 2;
+```

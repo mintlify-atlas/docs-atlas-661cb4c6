@@ -1,0 +1,206 @@
+---
+title: Git Commits
+description: Learn how to create, modify, and manage commits in Git
+---
+
+# Git Commits
+
+The building block of version control in Git is the commit. A commit represents a unit of work that includes changes to files, a commit message, and metadata like the author and timestamp.
+
+## The Staging Area
+
+Git's staging area is used to prepare changes for a commit. You can add or remove files from the staging area to control which changes are included in the next commit.
+
+### Stage Files
+
+Add changes to the staging area using `git add <pathspec>`:
+
+```bash
+# Usage: git add <pathspec>
+
+git add "30seconds.txt"
+# Add the file `30seconds.txt` to the staging area
+
+git add src/*.json
+# Add all files with a `.json` extension in the `src` directory
+
+git add .
+# Adds all changes to the staging area
+```
+
+### Unstage Files
+
+Remove files from the staging area using `git restore --staged <pathspec>`:
+
+```bash
+# Usage: git restore --staged <pathspec>
+
+git restore --staged "30seconds.txt"
+# Remove the file `30seconds.txt` from the staging area
+
+git restore --staged src/*.json
+# Remove all files with a `.json` extension in the `src` directory
+
+git restore --staged .
+# Remove all changes from the staging area
+```
+
+## Creating Commits
+
+Use `git commit -m <message>` to create a new commit with the staged changes and the specified message.
+
+### Basic Commit
+
+```bash
+# Syntax: git commit [-m <message>]
+
+git add .
+git commit -m "Fix the network bug"
+# Creates a commit with the message "Fix the network bug"
+
+git add .
+git commit
+# Opens the default text editor to enter the commit message
+```
+
+If you omit the `-m` option, Git will open the default text editor to enter the commit message.
+
+### Commit Without Running Git Hooks
+
+If you want to skip the pre-commit and commit-msg hooks, use the `--no-verify` option:
+
+```bash
+# Syntax: git commit --no-verify -m <message>
+
+# Make some changes to files, ones that your precommit hook might not allow
+git add .
+git commit --no-verify -m "Unsafe commit"
+# Creates a commit with the message "Unsafe commit", without running git hooks
+```
+
+Git hooks are usually set up to enforce coding standards, run tests, or perform other checks before allowing a commit. Use this option with caution.
+
+### Create an Empty Commit
+
+Empty commits are sometimes useful when you want to mark a point in history without making any changes:
+
+```bash
+# Syntax: git commit --allow-empty -m <message>
+
+git commit --allow-empty -m "Empty commit"
+# Creates an empty commit with the message "Empty commit"
+```
+
+No changes will be included in the commit, but it will still be recorded in the repository history.
+
+## Viewing Commits
+
+Check the current status of your working tree:
+
+```bash
+# Usage: git status [-sb]
+
+git status
+# On branch patch-1
+# Your branch is up to date with 'origin/patch-1'.
+#
+# Untracked files:
+#  (use "git add <file>..." to include in what will be committed)
+#  30-seconds.txt
+#
+# nothing added to commit but untracked files present (use "git add" to track)
+
+git status -sb
+# ## patch-1...origin/patch-1
+# ?? 30-seconds.txt
+```
+
+The `-sb` flag provides a more concise output, useful for quickly checking the status.
+
+## Commit Best Practices
+
+### Writing Good Commit Messages
+
+A good commit message should:
+- Use the imperative mood ("Add feature" not "Added feature")
+- Be concise but descriptive
+- Explain the "why" not just the "what"
+- Limit the first line to 50 characters
+- Provide additional context in the body if needed
+
+```bash
+# Good commit messages
+git commit -m "Fix null pointer exception in user service"
+git commit -m "Add email validation to registration form"
+git commit -m "Refactor database connection pooling"
+
+# Less ideal commit messages
+git commit -m "Fixed bug"  # Too vague
+git commit -m "Updated files"  # Not descriptive
+git commit -m "WIP"  # Not meaningful
+```
+
+### Commit Frequency
+
+- Commit early and often
+- Each commit should represent a logical unit of work
+- Avoid mixing unrelated changes in a single commit
+- Commit working code, not broken code
+
+## Common Commit Workflows
+
+### Standard Workflow
+
+```bash
+# 1. Make changes to files
+
+# 2. Check what changed
+git status
+
+# 3. Stage the changes
+git add .
+
+# 4. Create the commit
+git commit -m "Add user authentication"
+```
+
+### Selective Staging
+
+```bash
+# Stage specific files
+git add src/auth.js src/utils.js
+git commit -m "Add authentication utilities"
+
+# Stage other changes separately
+git add tests/auth.test.js
+git commit -m "Add authentication tests"
+```
+
+### Review Before Committing
+
+```bash
+# Check status
+git status
+
+# Review changes
+git diff
+
+# Stage changes
+git add .
+
+# Review staged changes
+git diff --staged
+
+# Commit
+git commit -m "Update user profile logic"
+```
+
+## Commit Tips
+
+- Use `git status` frequently to understand the current state
+- Review changes with `git diff` before staging
+- Use `git diff --staged` to review what will be committed
+- Keep commits focused and atomic
+- Don't commit sensitive information (API keys, passwords, etc.)
+- Test your changes before committing
+- Use meaningful commit messages that future you will understand

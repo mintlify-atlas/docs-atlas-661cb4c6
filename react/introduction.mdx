@@ -1,0 +1,120 @@
+---
+title: React Snippets and Components
+description: Discover function components and reusable hooks for React 18
+---
+
+Welcome to the React collection of 30 Seconds of Code. This collection contains practical, ready-to-use **function components** and **custom hooks** designed for React 18.
+
+## What You'll Find Here
+
+This collection is organized into three main categories:
+
+<CardGroup cols={3}>
+  <Card title="Hooks" icon="hook" href="/react/hooks/overview">
+    Custom React hooks for state management, side effects, and browser APIs
+  </Card>
+  <Card title="Components" icon="cube" href="/react/components/overview">
+    Reusable UI components for common patterns and interactions
+  </Card>
+  <Card title="Testing" icon="vial" href="/react/testing/overview">
+    Testing patterns and examples for React components
+  </Card>
+</CardGroup>
+
+## Key Features
+
+<AccordionGroup>
+  <Accordion title="Modern React Patterns">
+    All examples use modern React patterns including:
+    - Function components with hooks
+    - Declarative state management
+    - Effect cleanup and dependency management
+    - Custom hook composition
+  </Accordion>
+
+  <Accordion title="Production-Ready Code">
+    Each snippet is designed to be:
+    - Copy-paste ready for your projects
+    - Well-documented with explanations
+    - Tested and validated
+    - Following React best practices
+  </Accordion>
+
+  <Accordion title="Comprehensive Examples">
+    Every snippet includes:
+    - Complete implementation code
+    - Usage examples
+    - Edge case handling
+    - Performance considerations
+  </Accordion>
+</AccordionGroup>
+
+## React 18 Focus
+
+This collection specifically targets **React 18**, taking advantage of:
+
+- Concurrent rendering features
+- Automatic batching
+- Modern hooks API
+- Updated effect behavior
+
+## Quick Start
+
+Here's a simple example of a custom hook from this collection:
+
+```jsx
+const useToggle = (initialState = false) => {
+  const [state, setState] = React.useState(initialState);
+  const toggle = React.useCallback(() => setState(prev => !prev), []);
+  return [state, toggle];
+};
+
+// Usage
+const App = () => {
+  const [isOpen, toggleOpen] = useToggle(false);
+  return <button onClick={toggleOpen}>{isOpen ? 'Close' : 'Open'}</button>;
+};
+```
+
+## Navigation
+
+<Steps>
+  <Step title="Explore Hooks">
+    Start with the [Hooks Overview](/react/hooks/overview) to discover custom hooks for managing state, effects, and browser APIs.
+  </Step>
+  
+  <Step title="Browse Components">
+    Check out the [Components Overview](/react/components/overview) for ready-to-use UI components.
+  </Step>
+  
+  <Step title="Learn Testing">
+    Visit the [Testing Overview](/react/testing/overview) to learn how to test React components effectively.
+  </Step>
+</Steps>
+
+## Categories at a Glance
+
+### Custom Hooks
+
+- **Effect Hooks**: `useInterval`, `useTimeout`, `useEffectOnce`
+- **Event Hooks**: `useClickOutside`, `useClickInside`
+- **Network Hooks**: `useFetch`
+- **Observer Hooks**: `useMutationObserver`, `useIntersectionObserver`
+- **Lifecycle Hooks**: `useComponentDidMount`, `useComponentDidUpdate`
+
+### UI Components
+
+- **Interactive**: Toggle, Star Rating, Modal
+- **Data Display**: DataTable, TreeView, DataList
+- **Feedback**: Tooltip, Alert, Modal Dialog
+
+### Testing Patterns
+
+- Asynchronous component testing
+- Redux connected components
+- Portal testing
+- Event simulation
+
+<Note>
+  All code examples in this collection use modern JavaScript syntax and assume you have a React 18 environment set up.
+</Note>

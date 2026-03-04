@@ -1,0 +1,291 @@
+---
+title: JavaScript Promises Guide
+description: Master asynchronous JavaScript with promises, async/await, and best practices
+---
+
+# JavaScript Promises
+
+Promises are the foundation of asynchronous JavaScript. Understanding them deeply is essential for modern web development.
+
+## Promise Basics
+
+- **Promises** start in a **pending state**, neither fulfilled or rejected
+- When the operation is completed, a promise will become **fulfilled with a value**
+- If the operation fails, a promise will get **rejected with an error**
+
+## Creating Promises
+
+The function passed to the `Promise` constructor will execute synchronously.
+
+### From Values
+
+```javascript
+// Resolving with a value
+Promise.resolve(42).then(val => console.log(val)); // 42
+
+// Rejecting with an error
+Promise.reject(new Error('Failed')).catch(err => console.log(err.message)); // 'Failed'
+```
+
+### From Async Operations
+
+```javascript
+// Resolving with a value, rejecting with an error
+new Promise((resolve, reject) => {
+  performOperation((err, val) => {
+    if (err) reject(err);
+    else resolve(val);
+  });
+});
+
+// Resolving without value, no need for reject
+const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+```
+
+<Tip>
+  If you put a fulfilled promise into a fulfilled promise, they will collapse into one.
+</Tip>
+
+## Handling Promises
+
+### Promise.prototype.then()
+
+`Promise.prototype.then()` accepts two optional arguments (`onFulfilled`, `onRejected`):
+
+```javascript
+promisedOperation()
+  .then(
+    val => val + 1,   // Called once the promise is fulfilled
+    err => {            // Called if the promise is rejected
+      if (err === someKnownErr) return defaultVal;
+      else throw err;
+    }
+  );
+```
+
+- Calls `onFulfilled` once the promise is fulfilled
+- Calls `onRejected` if the promise is rejected
+- Passes errors through if `onRejected` is undefined
+
+### Promise.prototype.catch()
+
+`Promise.prototype.catch()` accepts one argument (`onRejected`):
+
+```javascript
+promisedOperation()
+  .then(val => val + 1)
+  .catch(err => console.log(err)); // Called if the promise is rejected
+```
+
+- Behaves like `Promise.prototype.then()` when `onFulfilled` is omitted
+- Passes fulfilled values through
+
+### Promise.prototype.finally()
+
+`Promise.prototype.finally()` accepts one argument (`onFinally`):
+
+```javascript
+promisedOperation()
+  .then(val => val + 1)
+  .catch(err => console.log(err))
+  .finally(() => console.log('Done')); // Called once any outcome is available
+```
+
+- Calls `onFinally` with no arguments once any outcome is available
+- Passes through input promise
+
+<Note>
+  All three methods will not be executed at least until the next tick, even for promises that already have an outcome.
+</Note>
+
+## Combining Promises
+
+### Promise.all()
+
+Turns an array of promises into a promise of an array:
+
+```javascript
+Promise
+  .all([ p1, p2, p3 ])
+  .then(([ v1, v2, v3 ]) => {
+    // Values always correspond to the order of promises,
+    // not the order they resolved in (i.e. v1 corresponds to p1)
+  });
+```
+
+<Warning>
+  If any promise is rejected, `Promise.all()` will immediately reject with that error.
+</Warning>
+
+### Promise.race()
+
+Passes through the first settled promise:
+
+```javascript
+Promise
+  .race([ p1, p2, p3 ])
+  .then(val => {
+    // val will take the value of the first resolved promise
+  });
+```
+
+### Promise.allSettled()
+
+Waits for all promises to settle (fulfilled or rejected):
+
+```javascript
+Promise.allSettled([p1, p2, p3]).then(results => {
+  results.forEach(result => {
+    if (result.status === 'fulfilled') {
+      console.log('Value:', result.value);
+    } else {
+      console.log('Error:', result.reason);
+    }
+  });
+});
+```
+
+## async/await
+
+The modern way to work with promises.
+
+### Basic Usage
+
+```javascript
+async () => {
+  try {
+    let val = await promisedValue();
+    // Do stuff here
+  } catch (err) {
+    // Handle error
+  }
+}
+```
+
+### Key Points
+
+- Calling an `async` function always results in a promise
+- `(async () => value)()` will resolve to `value`
+- `(async () => throw err)()` will reject with an error
+- `await` waits for a promise to be fulfilled and returns its value
+- `await` can only be used in `async` functions
+- `await` also accepts non-promise values
+- `await` always waits at least until the next tick before resolving
+
+### Practical Example
+
+```javascript
+async function fetchUserData(userId) {
+  try {
+    const response = await fetch(`/api/users/${userId}`);
+    const user = await response.json();
+    return user;
+  } catch (error) {
+    console.error('Failed to fetch user:', error);
+    throw error;
+  }
+}
+
+// Usage
+fetchUserData(123)
+  .then(user => console.log(user))
+  .catch(err => console.error(err));
+```
+
+## Running Promises in Series
+
+JavaScript promises are asynchronous, meaning they execute in parallel. To execute promises one after another (sequentially), chain them using `Array.prototype.reduce()`:
+
+```javascript
+const runPromisesInSeries = ps =>
+  ps.reduce((p, next) => p.then(next), Promise.resolve());
+
+const delay = d => new Promise(r => setTimeout(r, d));
+runPromisesInSeries([() => delay(1000), () => delay(2000)]);
+// Executes each promise sequentially, taking a total of 3 seconds to complete
+```
+
+Each promise in the chain returns the next promise when resolved, using `Promise.prototype.then()`.
+
+## Common Patterns
+
+### Timeout with Promise.race()
+
+```javascript
+const timeout = (ms) => new Promise((_, reject) =>
+  setTimeout(() => reject(new Error('Timeout')), ms)
+);
+
+const fetchWithTimeout = (url, ms) =>
+  Promise.race([
+    fetch(url),
+    timeout(ms)
+  ]);
+
+// Fails if fetch takes longer than 5 seconds
+fetchWithTimeout('/api/data', 5000)
+  .then(response => response.json())
+  .catch(err => console.error(err));
+```
+
+### Retry Logic
+
+```javascript
+const retry = async (fn, retries = 3, delay = 1000) => {
+  try {
+    return await fn();
+  } catch (error) {
+    if (retries === 0) throw error;
+    await new Promise(resolve => setTimeout(resolve, delay));
+    return retry(fn, retries - 1, delay);
+  }
+};
+
+// Usage
+retry(() => fetch('/api/data'), 3, 1000)
+  .then(response => response.json())
+  .catch(err => console.error('Failed after 3 retries:', err));
+```
+
+### Parallel with Limit
+
+```javascript
+const parallelLimit = async (tasks, limit) => {
+  const results = [];
+  const executing = [];
+
+  for (const [index, task] of tasks.entries()) {
+    const promise = Promise.resolve().then(() => task());
+    results.push(promise);
+
+    if (limit <= tasks.length) {
+      const executing = promise.then(() =>
+        executing.splice(executing.indexOf(executing), 1)
+      );
+      executing.push(executing);
+      if (executing.length >= limit) {
+        await Promise.race(executing);
+      }
+    }
+  }
+
+  return Promise.all(results);
+};
+```
+
+## Best Practices
+
+<AccordionGroup>
+  <Accordion title="Always handle errors">
+    Use `.catch()` or try/catch with async/await to handle errors. Unhandled promise rejections can cause issues.
+  </Accordion>
+  <Accordion title="Prefer async/await over .then()">
+    async/await is more readable and easier to debug. Use .then() for simple chains.
+  </Accordion>
+  <Accordion title="Don't forget to await">
+    A common mistake is forgetting to await async functions, which returns a promise instead of the value.
+  </Accordion>
+  <Accordion title="Use Promise.all() for parallel operations">
+    When operations don't depend on each other, run them in parallel with Promise.all() for better performance.
+  </Accordion>
+</AccordionGroup>

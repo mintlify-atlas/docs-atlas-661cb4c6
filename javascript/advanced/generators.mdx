@@ -1,0 +1,410 @@
+---
+title: JavaScript Generators
+description: Learn about generator functions, iterators, and lazy evaluation in JavaScript
+---
+
+# Generators in JavaScript
+
+Generators are special functions that can pause execution and resume later, allowing you to produce a sequence of values over time rather than computing them all at once.
+
+## Basic Generator Syntax
+
+Generators are defined using the `function*` syntax and use the `yield` keyword to pause execution.
+
+```javascript
+function* simpleGenerator() {
+  yield 1;
+  yield 2;
+  yield 3;
+}
+
+const gen = simpleGenerator();
+
+console.log(gen.next()); // { value: 1, done: false }
+console.log(gen.next()); // { value: 2, done: false }
+console.log(gen.next()); // { value: 3, done: false }
+console.log(gen.next()); // { value: undefined, done: true }
+```
+
+<Tip>
+  Generators return an iterator object. Each call to `next()` resumes execution until the next `yield` statement.
+</Tip>
+
+## Using Generators with for...of
+
+Generators are iterable, so they work with `for...of` loops:
+
+```javascript
+function* countTo(n) {
+  for (let i = 1; i <= n; i++) {
+    yield i;
+  }
+}
+
+for (const num of countTo(5)) {
+  console.log(num);
+}
+// 1
+// 2
+// 3
+// 4
+// 5
+```
+
+## Infinite Sequences
+
+Generators can produce infinite sequences because values are computed lazily:
+
+```javascript
+function* infiniteSequence() {
+  let i = 0;
+  while (true) {
+    yield i++;
+  }
+}
+
+const gen = infiniteSequence();
+console.log(gen.next().value); // 0
+console.log(gen.next().value); // 1
+console.log(gen.next().value); // 2
+// Can continue forever
+```
+
+### Fibonacci Generator
+
+```javascript
+function* fibonacci() {
+  let [prev, curr] = [0, 1];
+  while (true) {
+    yield curr;
+    [prev, curr] = [curr, prev + curr];
+  }
+}
+
+const fib = fibonacci();
+console.log(fib.next().value); // 1
+console.log(fib.next().value); // 1
+console.log(fib.next().value); // 2
+console.log(fib.next().value); // 3
+console.log(fib.next().value); // 5
+console.log(fib.next().value); // 8
+```
+
+## Passing Values to Generators
+
+You can pass values to a generator using `next(value)`:
+
+```javascript
+function* generatorWithInput() {
+  const input1 = yield 'Give me input 1';
+  console.log('Received:', input1);
+  
+  const input2 = yield 'Give me input 2';
+  console.log('Received:', input2);
+  
+  return 'Done!';
+}
+
+const gen = generatorWithInput();
+console.log(gen.next());        // { value: 'Give me input 1', done: false }
+console.log(gen.next('First')); // Received: First
+                                 // { value: 'Give me input 2', done: false }
+console.log(gen.next('Second'));// Received: Second
+                                 // { value: 'Done!', done: true }
+```
+
+<Note>
+  The first `next()` call starts the generator but doesn't pass a value. Subsequent `next(value)` calls pass the value to the last `yield`.
+</Note>
+
+## yield* (Delegating to Another Generator)
+
+You can delegate to another generator using `yield*`:
+
+```javascript
+function* generator1() {
+  yield 1;
+  yield 2;
+}
+
+function* generator2() {
+  yield 'a';
+  yield* generator1();
+  yield 'b';
+}
+
+for (const value of generator2()) {
+  console.log(value);
+}
+// 'a'
+// 1
+// 2
+// 'b'
+```
+
+## Practical Examples
+
+### ID Generator
+
+```javascript
+function* idGenerator() {
+  let id = 1;
+  while (true) {
+    yield id++;
+  }
+}
+
+const ids = idGenerator();
+const user1 = { id: ids.next().value, name: 'Alice' };
+const user2 = { id: ids.next().value, name: 'Bob' };
+const user3 = { id: ids.next().value, name: 'Charlie' };
+```
+
+### Range Generator
+
+```javascript
+function* range(start, end, step = 1) {
+  for (let i = start; i <= end; i += step) {
+    yield i;
+  }
+}
+
+const numbers = [...range(1, 10, 2)];
+console.log(numbers); // [1, 3, 5, 7, 9]
+```
+
+### Batch Processing
+
+```javascript
+function* batch(array, size) {
+  for (let i = 0; i < array.length; i += size) {
+    yield array.slice(i, i + size);
+  }
+}
+
+const data = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+for (const chunk of batch(data, 3)) {
+  console.log(chunk);
+}
+// [1, 2, 3]
+// [4, 5, 6]
+// [7, 8, 9]
+// [10]
+```
+
+### Tree Traversal
+
+```javascript
+class TreeNode {
+  constructor(value, children = []) {
+    this.value = value;
+    this.children = children;
+  }
+
+  *traverse() {
+    yield this.value;
+    for (const child of this.children) {
+      yield* child.traverse();
+    }
+  }
+}
+
+const tree = new TreeNode(1, [
+  new TreeNode(2, [
+    new TreeNode(4),
+    new TreeNode(5)
+  ]),
+  new TreeNode(3, [
+    new TreeNode(6),
+    new TreeNode(7)
+  ])
+]);
+
+console.log([...tree.traverse()]); // [1, 2, 4, 5, 3, 6, 7]
+```
+
+### Async Data Fetching
+
+```javascript
+function* fetchPages(urls) {
+  for (const url of urls) {
+    yield fetch(url).then(r => r.json());
+  }
+}
+
+const urls = [
+  'https://api.example.com/page1',
+  'https://api.example.com/page2',
+  'https://api.example.com/page3'
+];
+
+const pages = fetchPages(urls);
+
+// Process one at a time
+for (const pagePromise of pages) {
+  const data = await pagePromise;
+  console.log(data);
+}
+```
+
+## Generator Methods
+
+### return()
+
+Force a generator to complete:
+
+```javascript
+function* gen() {
+  yield 1;
+  yield 2;
+  yield 3;
+}
+
+const g = gen();
+console.log(g.next());        // { value: 1, done: false }
+console.log(g.return('end')); // { value: 'end', done: true }
+console.log(g.next());        // { value: undefined, done: true }
+```
+
+### throw()
+
+Throw an error into the generator:
+
+```javascript
+function* gen() {
+  try {
+    yield 1;
+    yield 2;
+    yield 3;
+  } catch (e) {
+    console.log('Caught:', e.message);
+  }
+}
+
+const g = gen();
+console.log(g.next());                    // { value: 1, done: false }
+console.log(g.throw(new Error('Error'))); // Caught: Error
+                                           // { value: undefined, done: true }
+```
+
+## Lazy Evaluation
+
+Generators enable lazy evaluation - values are computed only when needed:
+
+```javascript
+function* map(iterable, fn) {
+  for (const item of iterable) {
+    yield fn(item);
+  }
+}
+
+function* filter(iterable, predicate) {
+  for (const item of iterable) {
+    if (predicate(item)) yield item;
+  }
+}
+
+function* take(iterable, n) {
+  let count = 0;
+  for (const item of iterable) {
+    if (count++ >= n) return;
+    yield item;
+  }
+}
+
+// Create a pipeline
+const numbers = function* () {
+  let i = 0;
+  while (true) yield i++;
+}();
+
+const doubled = map(numbers, x => x * 2);
+const evens = filter(doubled, x => x % 4 === 0);
+const firstTen = take(evens, 10);
+
+console.log([...firstTen]); // [0, 4, 8, 12, 16, 20, 24, 28, 32, 36]
+```
+
+<Tip>
+  This pipeline processes only the values needed, not all infinite numbers. Each operation is performed lazily.
+</Tip>
+
+## Async Generators
+
+Async generators combine generators with async/await:
+
+```javascript
+async function* asyncGenerator() {
+  yield await Promise.resolve(1);
+  yield await Promise.resolve(2);
+  yield await Promise.resolve(3);
+}
+
+(async () => {
+  for await (const value of asyncGenerator()) {
+    console.log(value);
+  }
+})();
+// 1
+// 2
+// 3
+```
+
+### Async Data Stream
+
+```javascript
+async function* fetchUserPages(userId, maxPages = 5) {
+  let page = 1;
+  while (page <= maxPages) {
+    const response = await fetch(`/api/users/${userId}/posts?page=${page}`);
+    const data = await response.json();
+    if (data.posts.length === 0) break;
+    yield data.posts;
+    page++;
+  }
+}
+
+// Usage
+(async () => {
+  for await (const posts of fetchUserPages(123)) {
+    console.log('Page of posts:', posts);
+  }
+})();
+```
+
+## Use Cases
+
+<AccordionGroup>
+  <Accordion title="Infinite Sequences">
+    Generate infinite sequences like IDs, random numbers, or mathematical sequences without consuming memory.
+  </Accordion>
+  <Accordion title="Lazy Evaluation">
+    Process large datasets or streams one item at a time without loading everything into memory.
+  </Accordion>
+  <Accordion title="Iteration Control">
+    Create custom iterators for complex data structures like trees, graphs, or custom collections.
+  </Accordion>
+  <Accordion title="State Machines">
+    Implement state machines where each `yield` represents a state transition.
+  </Accordion>
+  <Accordion title="Async Operations">
+    Coordinate multiple async operations with async generators, useful for pagination or streaming.
+  </Accordion>
+</AccordionGroup>
+
+## Best Practices
+
+<AccordionGroup>
+  <Accordion title="Use generators for large sequences">
+    When working with large or infinite sequences, generators save memory by computing values on demand.
+  </Accordion>
+  <Accordion title="Combine with iterators">
+    Generators are perfect for creating custom iterators for complex data structures.
+  </Accordion>
+  <Accordion title="Leverage lazy evaluation">
+    Use generator pipelines to process data lazily, computing only what's needed.
+  </Accordion>
+  <Accordion title="Handle errors properly">
+    Use try/catch blocks inside generators to handle errors during iteration.
+  </Accordion>
+</AccordionGroup>

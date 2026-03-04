@@ -1,0 +1,296 @@
+---
+title: Arrow Functions in JavaScript
+description: Complete guide to arrow functions - syntax, execution context, and best practices
+---
+
+# Arrow Functions
+
+JavaScript arrow functions are a very useful tool to learn and master. Here's a complete introduction to everything you need to know.
+
+## Syntax Evolution
+
+Let's refactor a regular function step by step to understand arrow function syntax:
+
+### Step 1: Regular Function Declaration
+
+```javascript
+function square(a) {
+  return a * a;
+}
+```
+
+### Step 2: Function Expression
+
+```javascript
+const square = function (a) {
+  return a * a;
+};
+```
+
+### Step 3: Arrow Function with Braces
+
+```javascript
+const square = (a) => {
+  return a * a;
+};
+```
+
+### Step 4: Remove Parentheses (Single Parameter)
+
+```javascript
+const square = a => {
+  return a * a;
+};
+```
+
+### Step 5: Implicit Return
+
+```javascript
+const square = a => a * a;
+```
+
+<Tip>
+  For single-parameter arrow functions with a single expression, you can omit parentheses, braces, and the return keyword.
+</Tip>
+
+## Syntax Variations
+
+### No Parameters
+
+```javascript
+const greet = () => 'Hello!';
+greet(); // 'Hello!'
+```
+
+### Multiple Parameters
+
+```javascript
+const add = (a, b) => a + b;
+add(2, 3); // 5
+```
+
+### Returning Objects
+
+Wrap object literals in parentheses:
+
+```javascript
+const makeUser = (name, age) => ({ name, age });
+makeUser('Alice', 25); // { name: 'Alice', age: 25 }
+```
+
+### Multiple Statements
+
+```javascript
+const processValue = x => {
+  const doubled = x * 2;
+  const squared = doubled * doubled;
+  return squared;
+};
+```
+
+## Execution Context (this)
+
+The main difference between arrow functions and regular functions is **execution context** (i.e. the value of `this`). Technically speaking, most other differences often mentioned either stem from this one or are side effects of it.
+
+### Regular Functions: Dynamic `this`
+
+In a regular function, `this` is dynamic and depends on how the function was invoked:
+
+```javascript
+function simple() { return this; }
+const object = {
+  method() { return this; }
+};
+class Class {
+  classMethod() { console.log(this); }
+}
+const instance = new Class();
+
+simple();                   // `this` refers to the global object
+new simple();               // `this` refers to the newly created instance
+
+object.method();            // `this` refers to `object`
+simple.call(object);        // `this` refers to `object`
+
+instance.classMethod();     // `this` refers to `instance`
+setTimeout(
+  instance.classMethod, 0   // `this` refers to the global object
+);
+```
+
+### Arrow Functions: Lexical `this`
+
+Arrow functions, unlike regular ones, don't define their own execution context. Therefore `this` inside an arrow function always refers to the **lexical `this`** (i.e. the scope in which the arrow function was defined).
+
+```javascript
+const simple = () => this;
+const object = {
+  method: () => this
+};
+class Class {
+  classMethod = () => { console.log(this); }
+}
+const instance = new Class();
+
+simple();                   // `this` refers to the global object
+new simple();               // Uncaught TypeError: simple is not a constructor
+
+object.method();            // `this` refers to the global object
+simple.call(object);        // `this` refers to the global object
+
+instance.classMethod();     // `this` refers to `instance`
+setTimeout(
+  instance.classMethod, 0   // `this` refers to `instance`
+);
+```
+
+<Warning>
+  Arrow functions cannot be used as constructors and will throw a TypeError when used with the `new` keyword.
+</Warning>
+
+## When to Use Arrow Functions
+
+### ✅ Good Use Cases
+
+#### Array Methods
+
+```javascript
+const numbers = [1, 2, 3, 4, 5];
+
+// Concise and readable
+const doubled = numbers.map(n => n * 2);
+const evens = numbers.filter(n => n % 2 === 0);
+const sum = numbers.reduce((acc, n) => acc + n, 0);
+```
+
+#### Callbacks
+
+```javascript
+setTimeout(() => console.log('Hello!'), 1000);
+
+document.getElementById('btn').addEventListener('click', () => {
+  console.log('Clicked!');
+});
+```
+
+#### Preserving Context
+
+```javascript
+class Counter {
+  count = 0;
+
+  increment = () => {
+    this.count++;
+  }
+
+  start() {
+    // Arrow function preserves `this`
+    setInterval(this.increment, 1000);
+  }
+}
+```
+
+### ❌ Avoid Arrow Functions For
+
+#### Object Methods
+
+```javascript
+// Bad - `this` doesn't refer to the object
+const obj = {
+  value: 42,
+  getValue: () => this.value  // undefined
+};
+
+// Good - regular function for object methods
+const obj = {
+  value: 42,
+  getValue() { return this.value; }  // 42
+};
+```
+
+#### Event Handlers Needing `this`
+
+```javascript
+// Bad - `this` doesn't refer to the element
+button.addEventListener('click', () => {
+  this.classList.toggle('active');  // Error
+});
+
+// Good - use regular function
+button.addEventListener('click', function() {
+  this.classList.toggle('active');  // Works
+});
+```
+
+#### Constructors
+
+```javascript
+// Error - arrow functions can't be constructors
+const Person = (name) => {
+  this.name = name;
+};
+new Person('Alice');  // TypeError
+
+// Good - use regular function or class
+function Person(name) {
+  this.name = name;
+}
+new Person('Alice');  // Works
+```
+
+## Advanced Patterns
+
+### Immediately Invoked Arrow Functions
+
+```javascript
+const result = (x => x * 2)(5);  // 10
+
+// Useful for creating scopes
+(() => {
+  const private = 'secret';
+  console.log(private);
+})();
+```
+
+### Curried Functions
+
+```javascript
+const multiply = a => b => a * b;
+
+const double = multiply(2);
+double(5);  // 10
+double(8);  // 16
+```
+
+### Async Arrow Functions
+
+```javascript
+const fetchData = async (url) => {
+  const response = await fetch(url);
+  return response.json();
+};
+
+// Or more concise
+const fetchData = async url => (await fetch(url)).json();
+```
+
+## Summary
+
+<AccordionGroup>
+  <Accordion title="Syntax Benefits">
+    - More concise than regular functions
+    - Implicit returns for single expressions
+    - No need for `function` keyword
+  </Accordion>
+  <Accordion title="Execution Context">
+    - Lexical `this` (inherits from parent scope)
+    - Cannot be used as constructors
+    - Perfect for callbacks and array methods
+  </Accordion>
+  <Accordion title="Best Practices">
+    - Use for short callbacks and array methods
+    - Avoid for object methods and event handlers
+    - Great for preserving `this` context
+    - Use regular functions when you need dynamic `this`
+  </Accordion>
+</AccordionGroup>

@@ -1,0 +1,367 @@
+---
+title: Querying the DOM in JavaScript
+description: Learn how to find and select HTML elements using JavaScript
+---
+
+# DOM Querying
+
+Before you can manipulate elements, you need to find them. JavaScript provides several methods to query and select elements from the DOM.
+
+## Query Selectors
+
+### querySelector
+
+Returns the first element that matches a CSS selector:
+
+```javascript
+const element = document.querySelector('.container');
+const button = document.querySelector('#submit-btn');
+const firstParagraph = document.querySelector('p');
+const complexSelection = document.querySelector('div.container > p:first-child');
+```
+
+<Tip>
+  `querySelector` accepts any valid CSS selector, making it very flexible for complex queries.
+</Tip>
+
+### querySelectorAll
+
+Returns a NodeList of all elements that match a CSS selector:
+
+```javascript
+const allButtons = document.querySelectorAll('button');
+const activeItems = document.querySelectorAll('.item.active');
+const dataElements = document.querySelectorAll('[data-id]');
+
+// Convert NodeList to Array for array methods
+const buttonsArray = Array.from(allButtons);
+const buttonsSpread = [...allButtons];
+
+// Iterate over NodeList
+allButtons.forEach(button => {
+  console.log(button.textContent);
+});
+```
+
+## Classic Methods
+
+### getElementById
+
+Returns the element with the specified ID:
+
+```javascript
+const header = document.getElementById('header');
+// Note: No '#' prefix needed
+```
+
+### getElementsByClassName
+
+Returns a live HTMLCollection of elements with the specified class:
+
+```javascript
+const items = document.getElementsByClassName('item');
+// Returns a live collection that updates automatically
+
+// Convert to array to use array methods
+const itemsArray = Array.from(items);
+```
+
+<Note>
+  `getElementsByClassName` returns a live HTMLCollection, meaning it automatically updates when elements are added or removed from the DOM.
+</Note>
+
+### getElementsByTagName
+
+Returns a live HTMLCollection of elements with the specified tag name:
+
+```javascript
+const paragraphs = document.getElementsByTagName('p');
+const allElements = document.getElementsByTagName('*');
+```
+
+### getElementsByName
+
+Returns a NodeList of elements with the specified name attribute:
+
+```javascript
+const radioButtons = document.getElementsByName('gender');
+```
+
+## Traversing the DOM
+
+### Parent Elements
+
+```javascript
+const element = document.getElementById('child');
+
+const parent = element.parentElement;
+const parentNode = element.parentNode;
+
+// Find closest ancestor matching selector
+const container = element.closest('.container');
+const form = element.closest('form');
+```
+
+### Child Elements
+
+```javascript
+const parent = document.getElementById('parent');
+
+// All children
+const children = parent.children; // HTMLCollection
+const childNodes = parent.childNodes; // NodeList (includes text nodes)
+
+// First and last child
+const firstChild = parent.firstElementChild;
+const lastChild = parent.lastElementChild;
+
+// Query within parent
+const button = parent.querySelector('button');
+const allButtons = parent.querySelectorAll('button');
+```
+
+### Sibling Elements
+
+```javascript
+const element = document.getElementById('current');
+
+// Next sibling
+const next = element.nextElementSibling;
+
+// Previous sibling
+const previous = element.previousElementSibling;
+
+// Get all siblings
+const parent = element.parentElement;
+const siblings = Array.from(parent.children).filter(child => child !== element);
+```
+
+## Special Selections
+
+### Get Focused Element
+
+```javascript
+const focusedElement = document.activeElement;
+
+if (focusedElement === document.body) {
+  console.log('No element has focus');
+} else {
+  console.log('Focused element:', focusedElement);
+}
+```
+
+### Get All Inputs in a Form
+
+```javascript
+const form = document.getElementById('my-form');
+const inputs = form.querySelectorAll('input, textarea, select');
+
+// Or get form elements directly
+const formElements = form.elements;
+const emailInput = form.elements['email']; // by name attribute
+const emailByIndex = form.elements[0]; // by index
+```
+
+### Get Elements by Attribute
+
+```javascript
+// Elements with specific attribute
+const withDataId = document.querySelectorAll('[data-id]');
+
+// Elements with specific attribute value
+const active = document.querySelectorAll('[data-status="active"]');
+
+// Elements with attribute starting with value
+const external = document.querySelectorAll('[href^="http"]');
+
+// Elements with attribute ending with value
+const pdfLinks = document.querySelectorAll('[href$=".pdf"]');
+
+// Elements with attribute containing value
+const emailLinks = document.querySelectorAll('[href*="mailto"]');
+```
+
+## Checking Element Matches
+
+### matches()
+
+Check if an element matches a CSS selector:
+
+```javascript
+const element = document.getElementById('my-element');
+
+if (element.matches('.active')) {
+  console.log('Element is active');
+}
+
+if (element.matches('button.primary, a.primary')) {
+  console.log('Element is a primary button or link');
+}
+```
+
+### contains()
+
+Check if an element contains another element:
+
+```javascript
+const parent = document.getElementById('parent');
+const child = document.getElementById('child');
+
+if (parent.contains(child)) {
+  console.log('Parent contains child');
+}
+```
+
+## Performance Tips
+
+### Cache Selections
+
+Don't query the DOM repeatedly for the same element:
+
+```javascript
+// Bad - queries DOM 3 times
+for (let i = 0; i < 100; i++) {
+  document.getElementById('counter').textContent = i;
+}
+
+// Good - queries DOM once
+const counter = document.getElementById('counter');
+for (let i = 0; i < 100; i++) {
+  counter.textContent = i;
+}
+```
+
+### Scope Queries
+
+Query within a specific element instead of the entire document:
+
+```javascript
+// Less efficient - searches entire document
+const buttons = document.querySelectorAll('button');
+
+// More efficient - searches within container only
+const container = document.getElementById('container');
+const buttons = container.querySelectorAll('button');
+```
+
+### Use Specific Selectors
+
+```javascript
+// Slower - searches all elements
+const element = document.querySelectorAll('*').filter(el => el.id === 'target');
+
+// Faster - direct selection
+const element = document.getElementById('target');
+
+// Medium - CSS selector
+const element = document.querySelector('#target');
+```
+
+## Practical Examples
+
+### Find All Empty Elements
+
+```javascript
+const emptyElements = Array.from(document.querySelectorAll('*'))
+  .filter(el => el.children.length === 0 && el.textContent.trim() === '');
+```
+
+### Find All External Links
+
+```javascript
+const externalLinks = Array.from(document.querySelectorAll('a'))
+  .filter(link => {
+    const href = link.getAttribute('href');
+    return href && (href.startsWith('http://') || href.startsWith('https://'));
+  });
+```
+
+### Find Elements by Text Content
+
+```javascript
+const findByText = (text, selector = '*') => {
+  return Array.from(document.querySelectorAll(selector))
+    .filter(el => el.textContent.includes(text));
+};
+
+const elementsWithError = findByText('Error', '.message');
+```
+
+### Get Visible Elements Only
+
+```javascript
+const isVisible = (element) => {
+  return element.offsetWidth > 0 && 
+         element.offsetHeight > 0 && 
+         getComputedStyle(element).visibility !== 'hidden';
+};
+
+const visibleButtons = Array.from(document.querySelectorAll('button'))
+  .filter(isVisible);
+```
+
+## querySelector vs getElementById
+
+<AccordionGroup>
+  <Accordion title="Performance">
+    `getElementById` is generally faster than `querySelector('#id')` because it's optimized for ID lookups. However, the difference is usually negligible.
+  </Accordion>
+  <Accordion title="Flexibility">
+    `querySelector` is more flexible as it accepts any CSS selector, while `getElementById` only works with IDs.
+  </Accordion>
+  <Accordion title="Return type">
+    Both return a single element or null. `getElementById` is more specific and only works with IDs.
+  </Accordion>
+  <Accordion title="When to use which">
+    Use `getElementById` when you specifically need to find an element by ID. Use `querySelector` for more complex selections or when you need CSS selector flexibility.
+  </Accordion>
+</AccordionGroup>
+
+## Common Patterns
+
+### Store DOM References
+
+```javascript
+const DOM = {
+  form: document.getElementById('user-form'),
+  get nameInput() { return this.form.querySelector('[name="name"]'); },
+  get emailInput() { return this.form.querySelector('[name="email"]'); },
+  get submitButton() { return this.form.querySelector('[type="submit"]'); }
+};
+
+// Usage
+DOM.nameInput.value = 'Alice';
+DOM.submitButton.disabled = true;
+```
+
+### Delegate Event Listeners
+
+```javascript
+const container = document.getElementById('container');
+
+container.addEventListener('click', (e) => {
+  // Check if clicked element matches selector
+  if (e.target.matches('button.delete')) {
+    // Handle delete button click
+    const item = e.target.closest('.item');
+    item.remove();
+  }
+});
+```
+
+## Best Practices
+
+<AccordionGroup>
+  <Accordion title="Use querySelector for modern code">
+    `querySelector` and `querySelectorAll` are more flexible and work consistently across all scenarios.
+  </Accordion>
+  <Accordion title="Cache DOM references">
+    Store frequently accessed elements in variables to avoid repeated DOM queries.
+  </Accordion>
+  <Accordion title="Scope your queries">
+    Query within specific containers rather than the entire document when possible.
+  </Accordion>
+  <Accordion title="Convert NodeLists to Arrays">
+    Use `Array.from()` or the spread operator to convert NodeLists/HTMLCollections to arrays for better manipulation.
+  </Accordion>
+</AccordionGroup>

@@ -1,0 +1,151 @@
+---
+title: CSS Layouts
+description: Learn how to create common layouts with CSS3, using modern techniques such as flexbox and grid.
+---
+
+# CSS Layouts
+
+Modern CSS provides powerful tools for creating flexible, responsive layouts. This section covers essential layout techniques that form the foundation of contemporary web design.
+
+## Core Layout Concepts
+
+### The Box Model
+
+Understanding the CSS box model is fundamental to creating reliable layouts. By default, the `width` and `height` of an element are calculated based on the `content` property only, meaning padding and border increase the total size.
+
+Using `box-sizing: border-box` changes this behavior to include padding and border in width and height calculations, making layouts more predictable.
+
+```css
+/* Reset the box-model */
+div {
+  box-sizing: border-box;
+}
+
+/* Pass down the box-sizing property */
+*,
+*::before,
+*::after {
+  box-sizing: inherit;
+}
+```
+
+### Flexbox Layouts
+
+Flexbox is the **preferred method** for most modern layouts. It provides powerful alignment capabilities with minimal code. Using `display: flex` creates a flex context for direct children.
+
+**Key properties:**
+- `justify-content` - Alignment along the main axis
+- `align-items` - Alignment along the cross axis
+- `flex-direction` - Sets the main axis direction (row or column)
+- `flex-wrap` - Controls whether items wrap onto multiple lines
+- `gap` - Spacing between flex items
+
+### Grid Layouts
+
+CSS Grid excels at two-dimensional layouts where you need control over both rows and columns. It's particularly useful for page-level layouts and complex component structures.
+
+**Key properties:**
+- `grid-template-columns` / `grid-template-rows` - Define grid structure
+- `gap` - Spacing between grid items
+- `grid-area` - Position items in named areas
+- `fr` unit - Distributes available space proportionally
+
+## Common Layout Patterns
+
+### Centering Content
+
+Centering content is one of the most common layout tasks. Modern CSS offers several reliable approaches:
+
+**Flexbox centering** (recommended):
+```css
+.flexbox-centering {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+```
+
+**Grid centering**:
+```css
+.grid-centering {
+  display: grid;
+  justify-content: center;
+  align-items: center;
+}
+```
+
+**Transform centering** (for absolute positioning):
+```css
+.transform-centering {
+  position: relative;
+}
+
+.transform-centering > .content {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
+```
+
+### Sticky Footer
+
+Ensuring the footer stays at the bottom of the page, even with short content, is easily achieved with modern CSS.
+
+**Using Flexbox**:
+```css
+body {
+  min-height: 100vh;
+  min-height: 100dvh; /* Dynamic viewport height */
+  display: flex;
+  flex-direction: column;
+}
+
+footer {
+  margin-top: auto;
+}
+```
+
+**Using Grid**:
+```css
+body {
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: grid;
+  grid-template-rows: 1fr auto;
+}
+```
+
+### Even Distribution
+
+Distributing child elements evenly within a container is straightforward with Flexbox:
+
+```css
+.evenly-distributed-children {
+  display: flex;
+  justify-content: space-between;
+}
+
+/* Or with space around items */
+.evenly-spaced-children {
+  display: flex;
+  justify-content: space-around;
+}
+```
+
+## Best Practices
+
+1. **Use Flexbox for one-dimensional layouts** (rows or columns)
+2. **Use Grid for two-dimensional layouts** (rows and columns)
+3. **Always set `box-sizing: border-box`** for predictable sizing
+4. **Prefer logical properties** for better internationalization
+5. **Use modern viewport units** (`dvh`, `dvw`) with fallbacks
+6. **Test layouts at various viewport sizes**
+
+## Browser Support
+
+Both Flexbox and Grid have excellent browser support across all modern browsers. For older browser support (IE11 and below), you may need to use fallback techniques or polyfills.
+
+## Next Steps
+
+Explore practical [layout examples](/css/layout/examples) to see these techniques in action.

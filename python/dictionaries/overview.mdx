@@ -1,0 +1,152 @@
+---
+title: Python Dictionary Operations
+description: Utilities for transforming, mapping, and converting Python dictionaries
+---
+
+# Python Dictionary Operations
+
+Dictionaries are fundamental data structures in Python. These utilities help you transform, map, and convert dictionary data efficiently.
+
+## Convert Between Lists and Dictionaries
+
+### Dictionary to List
+
+Convert a dictionary to a list of tuples:
+
+```python
+def dict_to_list(d):
+  return list(d.items())
+
+d = {'one': 1, 'three': 3, 'five': 5, 'two': 2, 'four': 4}
+dict_to_list(d)
+# [('one', 1), ('three', 3), ('five', 5), ('two', 2), ('four', 4)]
+```
+
+### List to Dictionary
+
+Combine two lists into a dictionary:
+
+```python
+def to_dictionary(keys, values):
+  return dict(zip(keys, values))
+
+to_dictionary(['a', 'b'], [1, 2]) # {'a': 1, 'b': 2}
+```
+
+### Map List to Dictionary
+
+Apply a function to create key-value pairs:
+
+```python
+def map_dictionary(itr, fn):
+  return dict(zip(itr, map(fn, itr)))
+
+map_dictionary([1, 2, 3], lambda x: x * x) # {1: 1, 2: 4, 3: 9}
+```
+
+## Transform Dictionary Values
+
+Apply a function to all values in a dictionary:
+
+```python
+def map_values(obj, fn):
+  return dict((k, fn(v)) for k, v in obj.items())
+
+users = {
+  'fred': { 'user': 'fred', 'age': 40 },
+  'pebbles': { 'user': 'pebbles', 'age': 1 }
+}
+map_values(users, lambda u : u['age']) # {'fred': 40, 'pebbles': 1}
+```
+
+## Sort Dictionary List
+
+Sort a list of dictionaries using multiple keys:
+
+```python
+friends =  [
+  {"name": "John", "surname": "Doe", "age": 26},
+  {"name": "Jane", "surname": "Doe", "age": 28},
+  {"name": "Adam", "surname": "Smith", "age": 30},
+  {"name": "Michael", "surname": "Jones", "age": 28}
+]
+
+print(
+  sorted(
+    friends,
+    key=lambda friend:
+    (friend["age"], friend["surname"], friend["name"])
+  )
+)
+# [
+#   {'name': 'John', 'surname': 'Doe', 'age': 26},
+#   {'name': 'Jane', 'surname': 'Doe', 'age': 28},
+#   {'name': 'Michael', 'surname': 'Jones', 'age': 28},
+#   {'name': 'Adam', 'surname': 'Smith', 'age': 30}
+# ]
+```
+
+## Practical Use Cases
+
+### Extract Specific Fields
+
+Extract ages from user objects:
+
+```python
+users = {
+  'alice': {'name': 'Alice', 'age': 30},
+  'bob': {'name': 'Bob', 'age': 25}
+}
+ages = map_values(users, lambda u: u['age'])
+# {'alice': 30, 'bob': 25}
+```
+
+### Create Lookup Tables
+
+Build a lookup table from lists:
+
+```python
+ids = ['user1', 'user2', 'user3']
+names = ['Alice', 'Bob', 'Charlie']
+lookup = to_dictionary(ids, names)
+# {'user1': 'Alice', 'user2': 'Bob', 'user3': 'Charlie'}
+```
+
+### Transform API Responses
+
+Convert API data structures:
+
+```python
+api_data = {'key1': 'value1', 'key2': 'value2'}
+list_format = dict_to_list(api_data)
+# [('key1', 'value1'), ('key2', 'value2')]
+```
+
+### Multi-level Sorting
+
+Sort complex data structures:
+
+```python
+employees = [
+  {'dept': 'Sales', 'name': 'John', 'salary': 50000},
+  {'dept': 'Sales', 'name': 'Jane', 'salary': 60000},
+  {'dept': 'IT', 'name': 'Bob', 'salary': 55000}
+]
+
+sorted_employees = sorted(
+  employees,
+  key=lambda e: (e['dept'], -e['salary'], e['name'])
+)
+# First by department, then by salary (descending), then by name
+```
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Lists" icon="list" href="/python/lists/overview">
+    Learn about list operations
+  </Card>
+  <Card title="Strings" icon="text" href="/python/strings/overview">
+    Explore string manipulation utilities
+  </Card>
+</CardGroup>

@@ -1,0 +1,291 @@
+---
+title: DOM Manipulation in JavaScript
+description: Learn how to manipulate HTML elements using JavaScript
+---
+
+# DOM Manipulation
+
+The Document Object Model (DOM) is the browser's representation of your HTML. JavaScript provides powerful APIs to manipulate the DOM and create dynamic, interactive web pages.
+
+## Show and Hide Elements
+
+JavaScript allows you to change the CSS properties of an element by accessing its `style` property. This way, you can show or hide HTML elements by changing their `display` property.
+
+### Hide Elements
+
+In order to hide an HTML element, you can use the `display: none` CSS property. This will remove the element from the page layout, but it will still be present in the DOM.
+
+```javascript
+const hide = (...el) => [...el].forEach(e => (e.style.display = 'none'));
+
+hide(...document.querySelectorAll('img'));
+// Hides all <img> elements on the page
+```
+
+### Show Elements
+
+Most HTML elements have a default `display` property value. For example, the default value for `<div>` elements is `block`, while the default value for `<span>` elements is `inline`. In order to show an element, you can set its `display` property to its default value, or to an empty string (`''`).
+
+```javascript
+const show = (...el) => [...el].forEach(e => (e.style.display = ''));
+
+show(...document.querySelectorAll('img'));
+// Shows all <img> elements on the page
+```
+
+<Tip>
+  Combining the spread operator (`...`) with `Array.prototype.forEach()` allows you to show or hide multiple elements at once.
+</Tip>
+
+## Rendering DOM Elements
+
+Have you ever wondered how React's rendering works under the hood? Here's a simple JavaScript function that renders a DOM tree in a specified container.
+
+### Representing a DOM Tree
+
+Each element is an object with a `type` property representing the element's tag name, and a `props` object containing the element's attributes, event listeners, and children.
+
+```javascript
+const myElement = {
+  type: 'button',
+  props: {
+    type: 'button',
+    className: 'btn',
+    onClick: () => alert('Clicked'),
+    children: [{ props: { nodeValue: 'Click me' } }]
+  }
+};
+// Equivalent to:
+//  <button
+//    type="button"
+//    class="btn"
+//    onClick="alert('Clicked')"
+//  >
+//    Click me
+//  </button>
+```
+
+The special case of text elements is represented by an object without a `type` property, only containing a `props` object with a `nodeValue` property.
+
+### Render Function
+
+```javascript
+const renderElement = ({ type, props = {} }, container) => {
+  const isTextElement = !type;
+  const element = isTextElement
+    ? document.createTextNode('')
+    : document.createElement(type);
+
+  const isListener = p => p.startsWith('on');
+  const isAttribute = p => !isListener(p) && p !== 'children';
+
+  Object.keys(props).forEach(p => {
+    if (isAttribute(p)) element[p] = props[p];
+    if (!isTextElement && isListener(p))
+      element.addEventListener(p.toLowerCase().slice(2), props[p]);
+  });
+
+  if (!isTextElement && props.children && props.children.length)
+    props.children.forEach(childElement =>
+      renderElement(childElement, element)
+    );
+
+  container.appendChild(element);
+};
+
+const myElement = {
+  type: 'button',
+  props: {
+    type: 'button',
+    className: 'btn',
+    onClick: () => alert('Clicked'),
+    children: [{ props: { nodeValue: 'Click me' } }]
+  }
+};
+
+renderElement(myElement, document.body);
+// Renders our <button> element in the body of the document
+```
+
+<Warning>
+  This implementation is for demonstration purposes only and lacks many features and optimizations present in React or Preact.
+</Warning>
+
+## Creating Elements
+
+### createElement
+
+```javascript
+const div = document.createElement('div');
+div.className = 'container';
+div.textContent = 'Hello, World!';
+document.body.appendChild(div);
+```
+
+### createTextNode
+
+```javascript
+const text = document.createTextNode('Hello, World!');
+document.body.appendChild(text);
+```
+
+## Modifying Elements
+
+### Text Content
+
+```javascript
+const element = document.getElementById('my-element');
+element.textContent = 'New text';
+element.innerHTML = '<strong>New HTML</strong>';
+```
+
+<Warning>
+  Use `textContent` for plain text and `innerHTML` for HTML. Be careful with `innerHTML` when dealing with user input to prevent XSS attacks.
+</Warning>
+
+### Attributes
+
+```javascript
+const element = document.getElementById('my-element');
+
+// Get attribute
+const value = element.getAttribute('data-id');
+
+// Set attribute
+element.setAttribute('data-id', '123');
+
+// Remove attribute
+element.removeAttribute('data-id');
+
+// Check if attribute exists
+if (element.hasAttribute('data-id')) {
+  console.log('Has data-id attribute');
+}
+```
+
+### Classes
+
+```javascript
+const element = document.getElementById('my-element');
+
+// Add class
+element.classList.add('active');
+
+// Remove class
+element.classList.remove('inactive');
+
+// Toggle class
+element.classList.toggle('highlighted');
+
+// Check if has class
+if (element.classList.contains('active')) {
+  console.log('Element is active');
+}
+```
+
+### Styles
+
+```javascript
+const element = document.getElementById('my-element');
+
+// Set individual style
+element.style.color = 'red';
+element.style.fontSize = '16px';
+
+// Set multiple styles
+Object.assign(element.style, {
+  color: 'blue',
+  fontSize: '18px',
+  padding: '10px'
+});
+```
+
+## Removing Elements
+
+```javascript
+// Remove element
+const element = document.getElementById('my-element');
+element.remove();
+
+// Remove child
+const parent = document.getElementById('parent');
+const child = document.getElementById('child');
+parent.removeChild(child);
+
+// Remove all children
+const container = document.getElementById('container');
+while (container.firstChild) {
+  container.removeChild(container.firstChild);
+}
+
+// Or more simply
+container.innerHTML = '';
+```
+
+## Inserting Elements
+
+### appendChild
+
+```javascript
+const parent = document.getElementById('parent');
+const child = document.createElement('div');
+parent.appendChild(child);
+```
+
+### insertBefore
+
+```javascript
+const parent = document.getElementById('parent');
+const newElement = document.createElement('div');
+const referenceElement = document.getElementById('reference');
+parent.insertBefore(newElement, referenceElement);
+```
+
+### insertAdjacentHTML
+
+```javascript
+const element = document.getElementById('my-element');
+
+// Before the element itself
+element.insertAdjacentHTML('beforebegin', '<p>Before</p>');
+
+// Just inside the element, before its first child
+element.insertAdjacentHTML('afterbegin', '<p>First child</p>');
+
+// Just inside the element, after its last child
+element.insertAdjacentHTML('beforeend', '<p>Last child</p>');
+
+// After the element itself
+element.insertAdjacentHTML('afterend', '<p>After</p>');
+```
+
+## Cloning Elements
+
+```javascript
+const original = document.getElementById('original');
+
+// Shallow clone (no children)
+const shallowClone = original.cloneNode(false);
+
+// Deep clone (with children)
+const deepClone = original.cloneNode(true);
+
+document.body.appendChild(deepClone);
+```
+
+## Best Practices
+
+<AccordionGroup>
+  <Accordion title="Minimize DOM manipulation">
+    DOM manipulation is expensive. Batch changes together and use DocumentFragment for multiple insertions.
+  </Accordion>
+  <Accordion title="Use classList over className">
+    `classList` provides methods like add, remove, toggle, and contains, making it easier and more reliable than manipulating `className` string.
+  </Accordion>
+  <Accordion title="Sanitize user input">
+    When using `innerHTML` with user input, always sanitize the content to prevent XSS attacks. Consider using `textContent` instead.
+  </Accordion>
+  <Accordion title="Cache DOM references">
+    If you need to access an element multiple times, cache the reference instead of querying the DOM repeatedly.
+  </Accordion>
+</AccordionGroup>

@@ -1,0 +1,194 @@
+---
+title: Python String Operations
+description: String manipulation utilities including case conversion, formatting, and text transformations
+---
+
+# Python String Operations
+
+Python provides powerful string manipulation capabilities. These utilities cover common text processing tasks from case conversion to URL-friendly slug generation.
+
+## Case Conversion
+
+### Capitalize First Letter
+
+Capitalize the first letter of a string:
+
+```python
+def capitalize(s, lower_rest = False):
+  return ''.join([s[:1].upper(), (s[1:].lower() if lower_rest else s[1:])])
+
+capitalize('fooBar') # 'FooBar'
+capitalize('fooBar', True) # 'Foobar'
+```
+
+### Decapitalize First Letter
+
+Lowercase the first letter:
+
+```python
+def decapitalize(s, upper_rest = False):
+  return ''.join([s[:1].lower(), (s[1:].upper() if upper_rest else s[1:])])
+
+decapitalize('FooBar') # 'fooBar'
+decapitalize('FooBar', True) # 'fOOBAR'
+```
+
+### Capitalize Every Word
+
+Capitalize the first letter of each word:
+
+```python
+def capitalize_every_word(s):
+  return s.title()
+
+capitalize_every_word('hello world!') # 'Hello World!'
+```
+
+## Convert to Different Cases
+
+### Camel Case
+
+Convert strings to camelCase:
+
+```python
+from re import sub
+
+def camel(s):
+  s = sub(r"(_|-)+", " ", s).title().replace(" ", "")
+  return ''.join([s[0].lower(), s[1:]])
+
+camel('some_database_field_name') # 'someDatabaseFieldName'
+camel('Some label that needs to be camelized')
+# 'someLabelThatNeedsToBeCamelized'
+camel('some-javascript-property') # 'someJavascriptProperty'
+camel('some-mixed_string with spaces_underscores-and-hyphens')
+# 'someMixedStringWithSpacesUnderscoresAndHyphens'
+```
+
+### Kebab Case
+
+Convert strings to kebab-case:
+
+```python
+from re import sub
+
+def kebab(s):
+  return '-'.join(
+    sub(r"(\s|_|-)+"," ",
+    sub(r"[A-Z]{2,}(?=[A-Z][a-z]+[0-9]*|\b)|[A-Z]?[a-z]+[0-9]*|[A-Z]|[0-9]+",
+    lambda mo: ' ' + mo.group(0).lower(), s)).split())
+
+kebab('camelCase') # 'camel-case'
+kebab('some text') # 'some-text'
+kebab('some-mixed_string With spaces_underscores-and-hyphens')
+# 'some-mixed-string-with-spaces-underscores-and-hyphens'
+kebab('AllThe-small Things') # 'all-the-small-things'
+```
+
+### Snake Case
+
+Convert strings to snake_case:
+
+```python
+from re import sub
+
+def snake(s):
+  return '_'.join(
+    sub('([A-Z][a-z]+)', r' \1',
+    sub('([A-Z]+)', r' \1',
+    s.replace('-', ' '))).split()).lower()
+
+snake('camelCase') # 'camel_case'
+snake('some text') # 'some_text'
+snake('some-mixed_string With spaces_underscores-and-hyphens')
+# 'some_mixed_string_with_spaces_underscores_and_hyphens'
+snake('AllThe-small Things') # 'all_the_small_things'
+```
+
+## URL-Friendly Slugs
+
+Convert any string to a URL-friendly slug:
+
+```python
+from re import sub
+
+def slugify(s):
+  s = s.lower().strip()
+  s = sub(r'[^\w\s-]', '', s)
+  s = sub(r'[\s_-]+', '-', s)
+  s = sub(r'^-+|-+$', '', s)
+  return s
+
+slugify('Hello World!') # 'hello-world'
+```
+
+## Trim Whitespace
+
+### Remove Leading and Trailing Whitespace
+
+```python
+'  Hello  '.strip()    # 'Hello'
+```
+
+### Remove Leading Whitespace
+
+```python
+'  Hello  '.lstrip()   # 'Hello  '
+```
+
+### Remove Trailing Whitespace
+
+```python
+'  Hello  '.rstrip()   # '  Hello'
+```
+
+## Practical Use Cases
+
+### Generate Database Field Names
+
+```python
+label = "User's Full Name"
+field_name = snake(label)  # 'user_s_full_name'
+```
+
+### Create URL Slugs from Titles
+
+```python
+title = "10 Tips for Better Python Code!"
+url_slug = slugify(title)  # '10-tips-for-better-python-code'
+```
+
+### Format API Keys
+
+```python
+api_response = "some-api-field"
+python_var = snake(api_response)  # 'some_api_field'
+```
+
+### Clean User Input
+
+```python
+user_input = "  John Doe  \n"
+cleaned = user_input.strip()  # 'John Doe'
+```
+
+### Convert Between Naming Conventions
+
+```python
+javascript_var = "userName"
+python_var = snake(javascript_var)  # 'user_name'
+
+python_var = "user_name"
+javascript_var = camel(python_var)  # 'userName'
+```
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Lists" icon="list" href="/python/lists/overview">
+    Learn about list operations
+  </Card>
+  <Card title="Math" icon="calculator" href="/python/math/overview">
+    Explore mathematical utilities
+  </Card>
+</CardGroup>

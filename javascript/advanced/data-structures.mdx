@@ -1,0 +1,500 @@
+---
+title: Data Structures in JavaScript
+description: Learn about common data structures and their implementations in JavaScript
+---
+
+# Data Structures in JavaScript
+
+Data structures are ways to organize and store data efficiently. Understanding them helps you choose the right tool for each problem and write more efficient code.
+
+## Arrays
+
+Arrays are the most basic data structure in JavaScript, offering dynamic sizing and various built-in methods.
+
+### Basic Operations
+
+```javascript
+const arr = [1, 2, 3];
+
+// Add to end - O(1)
+arr.push(4);
+
+// Remove from end - O(1)
+const last = arr.pop();
+
+// Add to start - O(n)
+arr.unshift(0);
+
+// Remove from start - O(n)
+const first = arr.shift();
+
+// Access by index - O(1)
+const value = arr[2];
+
+// Search - O(n)
+const index = arr.indexOf(3);
+```
+
+## Objects (Hash Maps)
+
+Objects provide O(1) average-case lookup, insertion, and deletion.
+
+```javascript
+const map = {
+  key1: 'value1',
+  key2: 'value2'
+};
+
+// Add/Update - O(1)
+map.key3 = 'value3';
+map['key4'] = 'value4';
+
+// Access - O(1)
+const value = map.key1;
+const value2 = map['key2'];
+
+// Delete - O(1)
+delete map.key1;
+
+// Check existence - O(1)
+const exists = 'key2' in map;
+const hasOwn = map.hasOwnProperty('key2');
+
+// Get all keys - O(n)
+const keys = Object.keys(map);
+
+// Get all values - O(n)
+const values = Object.values(map);
+
+// Get all entries - O(n)
+const entries = Object.entries(map);
+```
+
+## Set
+
+Sets store unique values of any type.
+
+```javascript
+const set = new Set([1, 2, 3, 2, 1]); // Set { 1, 2, 3 }
+
+// Add - O(1)
+set.add(4);
+set.add(4); // Duplicate, no effect
+
+// Delete - O(1)
+set.delete(2);
+
+// Check existence - O(1)
+const has = set.has(3); // true
+
+// Size - O(1)
+const size = set.size;
+
+// Clear all - O(1)
+set.clear();
+
+// Iterate
+for (const value of set) {
+  console.log(value);
+}
+
+// Convert to array
+const arr = [...set];
+const arr2 = Array.from(set);
+```
+
+### Set Operations
+
+```javascript
+const setA = new Set([1, 2, 3, 4]);
+const setB = new Set([3, 4, 5, 6]);
+
+// Union
+const union = new Set([...setA, ...setB]); // Set { 1, 2, 3, 4, 5, 6 }
+
+// Intersection
+const intersection = new Set([...setA].filter(x => setB.has(x))); // Set { 3, 4 }
+
+// Difference
+const difference = new Set([...setA].filter(x => !setB.has(x))); // Set { 1, 2 }
+
+// Symmetric Difference
+const symmetricDiff = new Set([
+  ...[...setA].filter(x => !setB.has(x)),
+  ...[...setB].filter(x => !setA.has(x))
+]); // Set { 1, 2, 5, 6 }
+```
+
+## Map
+
+Maps are key-value pairs where keys can be any type (unlike objects where keys are strings/symbols).
+
+```javascript
+const map = new Map();
+
+// Set - O(1)
+map.set('string', 1);
+map.set(42, 'number key');
+map.set({}, 'object key');
+map.set([1, 2], 'array key');
+
+// Get - O(1)
+const value = map.get('string'); // 1
+
+// Has - O(1)
+const exists = map.has(42); // true
+
+// Delete - O(1)
+map.delete('string');
+
+// Size - O(1)
+const size = map.size;
+
+// Clear - O(1)
+map.clear();
+
+// Iterate
+for (const [key, value] of map) {
+  console.log(key, value);
+}
+
+// Get all keys
+const keys = [...map.keys()];
+
+// Get all values
+const values = [...map.values()];
+
+// Get all entries
+const entries = [...map.entries()];
+```
+
+## WeakMap and WeakSet
+
+WeakMap and WeakSet hold weak references to objects, allowing garbage collection.
+
+```javascript
+const weakMap = new WeakMap();
+const obj = { name: 'Alice' };
+
+weakMap.set(obj, 'some value');
+weakMap.get(obj); // 'some value'
+weakMap.has(obj); // true
+weakMap.delete(obj);
+
+// When obj is no longer referenced elsewhere,
+// it can be garbage collected along with its WeakMap entry
+
+const weakSet = new WeakSet();
+weakSet.add(obj);
+weakSet.has(obj); // true
+weakSet.delete(obj);
+```
+
+<Note>
+  WeakMap and WeakSet only accept objects as keys/values and are not iterable. They're useful for preventing memory leaks.
+</Note>
+
+## Stack
+
+Last-In-First-Out (LIFO) data structure.
+
+```javascript
+class Stack {
+  constructor() {
+    this.items = [];
+  }
+
+  push(element) {
+    this.items.push(element);
+  }
+
+  pop() {
+    if (this.isEmpty()) return null;
+    return this.items.pop();
+  }
+
+  peek() {
+    if (this.isEmpty()) return null;
+    return this.items[this.items.length - 1];
+  }
+
+  isEmpty() {
+    return this.items.length === 0;
+  }
+
+  size() {
+    return this.items.length;
+  }
+
+  clear() {
+    this.items = [];
+  }
+}
+
+const stack = new Stack();
+stack.push(1);
+stack.push(2);
+stack.push(3);
+console.log(stack.pop()); // 3
+console.log(stack.peek()); // 2
+```
+
+## Queue
+
+First-In-First-Out (FIFO) data structure.
+
+```javascript
+class Queue {
+  constructor() {
+    this.items = [];
+  }
+
+  enqueue(element) {
+    this.items.push(element);
+  }
+
+  dequeue() {
+    if (this.isEmpty()) return null;
+    return this.items.shift();
+  }
+
+  front() {
+    if (this.isEmpty()) return null;
+    return this.items[0];
+  }
+
+  isEmpty() {
+    return this.items.length === 0;
+  }
+
+  size() {
+    return this.items.length;
+  }
+
+  clear() {
+    this.items = [];
+  }
+}
+
+const queue = new Queue();
+queue.enqueue(1);
+queue.enqueue(2);
+queue.enqueue(3);
+console.log(queue.dequeue()); // 1
+console.log(queue.front()); // 2
+```
+
+## Linked List
+
+A linear data structure where elements are connected via pointers.
+
+```javascript
+class Node {
+  constructor(data) {
+    this.data = data;
+    this.next = null;
+  }
+}
+
+class LinkedList {
+  constructor() {
+    this.head = null;
+    this.size = 0;
+  }
+
+  add(data) {
+    const node = new Node(data);
+    if (!this.head) {
+      this.head = node;
+    } else {
+      let current = this.head;
+      while (current.next) {
+        current = current.next;
+      }
+      current.next = node;
+    }
+    this.size++;
+  }
+
+  insertAt(data, index) {
+    if (index < 0 || index > this.size) return false;
+
+    const node = new Node(data);
+    if (index === 0) {
+      node.next = this.head;
+      this.head = node;
+    } else {
+      let current = this.head;
+      let previous;
+      let i = 0;
+      while (i < index) {
+        previous = current;
+        current = current.next;
+        i++;
+      }
+      node.next = current;
+      previous.next = node;
+    }
+    this.size++;
+    return true;
+  }
+
+  removeFrom(index) {
+    if (index < 0 || index >= this.size) return null;
+
+    let current = this.head;
+    if (index === 0) {
+      this.head = current.next;
+    } else {
+      let previous;
+      let i = 0;
+      while (i < index) {
+        previous = current;
+        current = current.next;
+        i++;
+      }
+      previous.next = current.next;
+    }
+    this.size--;
+    return current.data;
+  }
+
+  indexOf(data) {
+    let current = this.head;
+    let index = 0;
+    while (current) {
+      if (current.data === data) return index;
+      current = current.next;
+      index++;
+    }
+    return -1;
+  }
+}
+
+const list = new LinkedList();
+list.add(1);
+list.add(2);
+list.add(3);
+list.insertAt(1.5, 1);
+console.log(list.indexOf(2)); // 2
+```
+
+## Binary Tree
+
+```javascript
+class TreeNode {
+  constructor(value) {
+    this.value = value;
+    this.left = null;
+    this.right = null;
+  }
+}
+
+class BinaryTree {
+  constructor() {
+    this.root = null;
+  }
+
+  insert(value) {
+    const node = new TreeNode(value);
+    if (!this.root) {
+      this.root = node;
+      return;
+    }
+
+    const queue = [this.root];
+    while (queue.length) {
+      const current = queue.shift();
+      if (!current.left) {
+        current.left = node;
+        return;
+      }
+      if (!current.right) {
+        current.right = node;
+        return;
+      }
+      queue.push(current.left, current.right);
+    }
+  }
+
+  // Depth-First Search
+  inOrder(node = this.root, result = []) {
+    if (node) {
+      this.inOrder(node.left, result);
+      result.push(node.value);
+      this.inOrder(node.right, result);
+    }
+    return result;
+  }
+
+  preOrder(node = this.root, result = []) {
+    if (node) {
+      result.push(node.value);
+      this.preOrder(node.left, result);
+      this.preOrder(node.right, result);
+    }
+    return result;
+  }
+
+  postOrder(node = this.root, result = []) {
+    if (node) {
+      this.postOrder(node.left, result);
+      this.postOrder(node.right, result);
+      result.push(node.value);
+    }
+    return result;
+  }
+
+  // Breadth-First Search
+  levelOrder() {
+    if (!this.root) return [];
+    const result = [];
+    const queue = [this.root];
+    while (queue.length) {
+      const node = queue.shift();
+      result.push(node.value);
+      if (node.left) queue.push(node.left);
+      if (node.right) queue.push(node.right);
+    }
+    return result;
+  }
+}
+
+const tree = new BinaryTree();
+tree.insert(1);
+tree.insert(2);
+tree.insert(3);
+tree.insert(4);
+console.log(tree.levelOrder()); // [1, 2, 3, 4]
+```
+
+## Complexity Comparison
+
+| Data Structure | Access | Search | Insert | Delete |
+|---------------|--------|--------|--------|--------|
+| Array         | O(1)   | O(n)   | O(n)   | O(n)   |
+| Object/Map    | O(1)   | O(1)   | O(1)   | O(1)   |
+| Set           | N/A    | O(1)   | O(1)   | O(1)   |
+| Stack         | O(n)   | O(n)   | O(1)   | O(1)   |
+| Queue         | O(n)   | O(n)   | O(1)   | O(1)   |
+| Linked List   | O(n)   | O(n)   | O(1)*  | O(1)*  |
+| Binary Tree   | O(n)   | O(n)   | O(n)   | O(n)   |
+
+*At known position
+
+## Best Practices
+
+<AccordionGroup>
+  <Accordion title="Choose based on operations">
+    If you need frequent lookups, use Map/Object. If you need unique values, use Set. If you need ordered insertion/deletion, use Array or LinkedList.
+  </Accordion>
+  <Accordion title="Use built-in structures first">
+    JavaScript's built-in Array, Object, Map, and Set are optimized and should be your first choice before implementing custom structures.
+  </Accordion>
+  <Accordion title="Consider memory vs speed">
+    Some structures use more memory for faster operations. Choose based on your constraints.
+  </Accordion>
+  <Accordion title="Understand time complexity">
+    Know the Big O complexity of operations for each data structure to make informed decisions.
+  </Accordion>
+</AccordionGroup>

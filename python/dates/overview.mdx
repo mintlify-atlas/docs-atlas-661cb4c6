@@ -1,0 +1,242 @@
+---
+title: Python Date Operations
+description: Date arithmetic, formatting, and comparison utilities for Python datetime objects
+---
+
+# Python Date Operations
+
+Working with dates in Python is straightforward with the `datetime` module. These utilities simplify common date operations like calculating differences, adding days, and checking date properties.
+
+## Calculate Date Differences
+
+Calculate the difference between two dates in days, months, or years:
+
+```python
+from datetime import date
+from math import ceil
+
+def days_diff(start, end):
+  return (end - start).days
+
+def months_diff(start, end):
+  return ceil((end - start).days / 30)
+
+def years_diff(start, end):
+  return ceil((end - start).days / 365)
+
+days_diff(date(2020, 10, 25), date(2020, 10, 28)) # 3
+months_diff(date(2020, 10, 25), date(2020, 11, 25)) # 1
+years_diff(date(2020, 10, 25), date(2021, 10, 25)) # 1
+```
+
+## Calculate Relative Dates
+
+### Days Ago
+
+Calculate a date n days in the past:
+
+```python
+from datetime import timedelta, date
+
+def days_ago(n):
+  return date.today() - timedelta(n)
+
+days_ago(5) # date(2020, 10, 23)
+```
+
+### Days From Now
+
+Calculate a date n days in the future:
+
+```python
+from datetime import timedelta, date
+
+def days_from_now(n):
+  return date.today() + timedelta(n)
+
+days_from_now(5) # date(2020, 11, 02)
+```
+
+### Add Days to a Date
+
+Add days to any date:
+
+```python
+from datetime import date, datetime, timedelta
+
+def add_days(n, d = datetime.today()):
+  return d + timedelta(n)
+
+add_days(5, date(2020, 10, 25)) # date(2020, 10, 30)
+add_days(-5, date(2020, 10, 25)) # date(2020, 10, 20)
+```
+
+### Subtract Days from a Date
+
+Subtract days from any date:
+
+```python
+from datetime import date, datetime, timedelta
+
+def subtract_days(n, d = datetime.today()):
+  return d - timedelta(n)
+
+subtract_days(5, date(2020, 10, 25)) # date(2020, 10, 20)
+subtract_days(-5, date(2020, 10, 25)) # date(2020, 10, 30)
+```
+
+## Check Date Properties
+
+### Check if Date is Weekend
+
+```python
+from datetime import datetime, date
+
+def is_weekend(d = datetime.today()):
+  return d.weekday() > 4
+
+is_weekend(date(2020, 10, 25)) # True
+is_weekend(date(2020, 10, 28)) # False
+```
+
+### Check if Date is Weekday
+
+```python
+from datetime import datetime, date
+
+def is_weekday(d = datetime.today()):
+  return d.weekday() <= 4
+
+is_weekday(date(2020, 10, 25)) # False
+is_weekday(date(2020, 10, 28)) # True
+```
+
+## Practical Use Cases
+
+### Calculate Age
+
+```python
+from datetime import date
+
+def calculate_age(birth_date):
+  today = date.today()
+  return years_diff(birth_date, today)
+
+birth_date = date(1990, 5, 15)
+age = calculate_age(birth_date)  # Current age
+```
+
+### Check Subscription Expiry
+
+```python
+from datetime import date
+
+subscription_end = date(2024, 12, 31)
+today = date.today()
+days_remaining = days_diff(today, subscription_end)
+
+if days_remaining < 0:
+    print("Subscription expired")
+elif days_remaining < 7:
+    print(f"Subscription expires in {days_remaining} days")
+else:
+    print("Subscription is active")
+```
+
+### Business Day Calculations
+
+```python
+from datetime import date, timedelta
+
+def add_business_days(start_date, days):
+  current = start_date
+  added = 0
+  
+  while added < days:
+    current = add_days(1, current)
+    if is_weekday(current):
+      added += 1
+  
+  return current
+
+order_date = date(2024, 1, 15)  # Monday
+delivery_date = add_business_days(order_date, 5)  # 5 business days later
+```
+
+### Date Range Generation
+
+```python
+from datetime import date
+
+def date_range(start, end):
+  dates = []
+  current = start
+  
+  while current <= end:
+    dates.append(current)
+    current = add_days(1, current)
+  
+  return dates
+
+start = date(2024, 1, 1)
+end = date(2024, 1, 7)
+week = date_range(start, end)
+# [date(2024, 1, 1), date(2024, 1, 2), ..., date(2024, 1, 7)]
+```
+
+### Report Date Filtering
+
+```python
+from datetime import date
+
+# Get dates for last 30 days
+end_date = date.today()
+start_date = days_ago(30)
+
+# Filter records
+records = get_all_records()
+recent_records = [
+    r for r in records 
+    if start_date <= r['date'] <= end_date
+]
+```
+
+### Scheduled Task Checker
+
+```python
+from datetime import date
+
+def should_run_task(last_run_date, interval_days):
+  next_run = add_days(interval_days, last_run_date)
+  return date.today() >= next_run
+
+last_backup = date(2024, 1, 1)
+if should_run_task(last_backup, 7):
+    print("Time to run weekly backup")
+```
+
+### Weekend/Weekday Event Pricing
+
+```python
+from datetime import date
+
+def get_ticket_price(event_date):
+  base_price = 50
+  if is_weekend(event_date):
+    return base_price * 1.5  # 50% weekend surcharge
+  return base_price
+
+event = date(2024, 2, 10)  # Saturday
+price = get_ticket_price(event)  # 75.0
+```
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Lists" icon="list" href="/python/lists/overview">
+    Learn about list operations
+  </Card>
+  <Card title="Dictionaries" icon="book" href="/python/dictionaries/overview">
+    Explore dictionary operations
+  </Card>
+</CardGroup>

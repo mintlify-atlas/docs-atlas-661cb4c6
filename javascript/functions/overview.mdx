@@ -1,0 +1,216 @@
+---
+title: JavaScript Functions Guide
+description: Master JavaScript functions, from basic syntax to advanced patterns
+---
+
+# JavaScript Functions
+
+Functions are the building blocks of JavaScript. Understanding functions deeply is essential for writing clean, maintainable code.
+
+## Function Types
+
+JavaScript offers multiple ways to define functions:
+
+### Function Declaration
+
+```javascript
+function square(a) {
+  return a * a;
+}
+```
+
+### Function Expression
+
+```javascript
+const square = function (a) {
+  return a * a;
+};
+```
+
+### Arrow Function
+
+```javascript
+const square = (a) => {
+  return a * a;
+};
+
+// Or with implicit return
+const square = a => a * a;
+```
+
+<CardGroup cols={2}>
+  <Card title="Arrow Functions" icon="arrow-right" href="./arrow-functions">
+    Learn about arrow function syntax and behavior
+  </Card>
+  <Card title="More Topics" icon="book" href="#">
+    More function topics coming soon
+  </Card>
+</CardGroup>
+
+## Function Patterns
+
+### Higher-Order Functions
+
+Functions that take other functions as arguments or return functions:
+
+```javascript
+const map = (arr, fn) => arr.map(fn);
+const double = x => x * 2;
+
+map([1, 2, 3], double); // [2, 4, 6]
+```
+
+### Currying
+
+Transforming a function with multiple arguments into a sequence of functions:
+
+```javascript
+const add = a => b => a + b;
+
+const add5 = add(5);
+add5(3); // 8
+add5(10); // 15
+```
+
+### Composition
+
+Combining multiple functions into a single function:
+
+```javascript
+const compose = (...fns) => x =>
+  fns.reduceRight((acc, fn) => fn(acc), x);
+
+const addOne = x => x + 1;
+const double = x => x * 2;
+const addOneThenDouble = compose(double, addOne);
+
+addOneThenDouble(3); // 8 (3 + 1 = 4, 4 * 2 = 8)
+```
+
+## Practical Examples
+
+### Memoization
+
+Cache function results for better performance:
+
+```javascript
+const memoize = fn => {
+  const cache = new Map();
+  return (...args) => {
+    const key = JSON.stringify(args);
+    if (cache.has(key)) return cache.get(key);
+    const result = fn(...args);
+    cache.set(key, result);
+    return result;
+  };
+};
+
+const fibonacci = memoize(n => {
+  if (n <= 1) return n;
+  return fibonacci(n - 1) + fibonacci(n - 2);
+});
+
+fibonacci(10); // 55 (much faster with memoization)
+```
+
+### Debounce
+
+Delay function execution until after a period of inactivity:
+
+```javascript
+const debounce = (fn, delay) => {
+  let timeoutId;
+  return (...args) => {
+    clearTimeout(timeoutId);
+    timeoutId = setTimeout(() => fn(...args), delay);
+  };
+};
+
+const handleSearch = debounce((query) => {
+  console.log('Searching for:', query);
+}, 300);
+
+// Only executes once, 300ms after the last call
+handleSearch('a');
+handleSearch('ab');
+handleSearch('abc');
+```
+
+### Throttle
+
+Limit how often a function can be called:
+
+```javascript
+const throttle = (fn, delay) => {
+  let lastCall = 0;
+  return (...args) => {
+    const now = Date.now();
+    if (now - lastCall >= delay) {
+      lastCall = now;
+      fn(...args);
+    }
+  };
+};
+
+const handleScroll = throttle(() => {
+  console.log('Scroll event handled');
+}, 100);
+
+window.addEventListener('scroll', handleScroll);
+```
+
+## Best Practices
+
+<AccordionGroup>
+  <Accordion title="Keep functions small and focused">
+    Each function should do one thing well. If a function is doing multiple things, consider splitting it into smaller functions.
+  </Accordion>
+  <Accordion title="Use descriptive names">
+    Function names should clearly describe what they do. Use verbs for functions that perform actions.
+  </Accordion>
+  <Accordion title="Minimize side effects">
+    Pure functions (no side effects, same input = same output) are easier to test and reason about.
+  </Accordion>
+  <Accordion title="Return early">
+    Use early returns to reduce nesting and improve readability.
+  </Accordion>
+</AccordionGroup>
+
+## Common Pitfalls
+
+### Function Hoisting
+
+Function declarations are hoisted, but function expressions are not:
+
+```javascript
+// Works - function declaration is hoisted
+sayHello(); // "Hello!"
+function sayHello() {
+  console.log('Hello!');
+}
+
+// Error - function expression is not hoisted
+sayGoodbye(); // TypeError: sayGoodbye is not a function
+const sayGoodbye = function() {
+  console.log('Goodbye!');
+};
+```
+
+### `this` Context
+
+Regular functions have dynamic `this`, arrow functions have lexical `this`:
+
+```javascript
+const obj = {
+  value: 42,
+  regular: function() {
+    console.log(this.value); // 42
+  },
+  arrow: () => {
+    console.log(this.value); // undefined (lexical this)
+  }
+};
+
+obj.regular(); // 42
+obj.arrow(); // undefined
+```

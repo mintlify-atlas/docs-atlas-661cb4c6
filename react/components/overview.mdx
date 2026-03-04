@@ -1,0 +1,396 @@
+---
+title: React Components Overview
+description: Reusable function components for common UI patterns
+---
+
+This collection provides production-ready React function components for common UI patterns. All components use modern React hooks and follow best practices.
+
+## Component Categories
+
+<CardGroup cols={3}>
+  <Card title="Interactive" icon="hand-pointer">
+    User input and interaction components
+    - Toggle
+    - Star Rating
+    - Password Revealer
+  </Card>
+  
+  <Card title="Data Display" icon="table">
+    Components for displaying data
+    - DataTable
+    - DataList
+    - TreeView
+  </Card>
+  
+  <Card title="Feedback" icon="comment">
+    User feedback components
+    - Tooltip
+    - Alert
+    - Modal Dialog
+  </Card>
+</CardGroup>
+
+## Quick Examples
+
+### Toggle Component
+
+A simple toggle component that acts as a visual checkbox:
+
+```jsx
+const Toggle = ({ defaultToggled = false }) => {
+  const [isToggleOn, setIsToggleOn] = React.useState(defaultToggled);
+
+  return (
+    <label className={isToggleOn ? 'toggle on' : 'toggle off'}>
+      <input
+        type="checkbox"
+        checked={isToggleOn}
+        onChange={() => setIsToggleOn(!isToggleOn)}
+      />
+      {isToggleOn ? 'ON' : 'OFF'}
+    </label>
+  );
+};
+```
+
+<Accordion title="CSS for Toggle Component">
+  ```css
+  .toggle input[type="checkbox"] {
+    display: none;
+  }
+
+  .toggle.on {
+    background-color: green;
+  }
+
+  .toggle.off {
+    background-color: red;
+  }
+  ```
+</Accordion>
+
+### Star Rating Component
+
+Create an interactive star rating component:
+
+```jsx
+const Star = ({ marked, starId }) => {
+  return (
+    <span data-star-id={starId} className="star" role="button">
+      {marked ? '\u2605' : '\u2606'}
+    </span>
+  );
+};
+
+const StarRating = ({ value }) => {
+  const [rating, setRating] = React.useState(parseInt(value) || 0);
+  const [selection, setSelection] = React.useState(0);
+
+  const hoverOver = event => {
+    let val = 0;
+    if (event && event.target && event.target.getAttribute('data-star-id'))
+      val = event.target.getAttribute('data-star-id');
+    setSelection(val);
+  };
+  
+  return (
+    <div
+      onMouseOut={() => hoverOver(null)}
+      onClick={e => setRating(e.target.getAttribute('data-star-id') || rating)}
+      onMouseOver={hoverOver}
+    >
+      {Array.from({ length: 5 }, (v, i) => (
+        <Star
+          starId={i + 1}
+          key={`star_${i + 1}`}
+          marked={selection ? selection >= i + 1 : rating >= i + 1}
+        />
+      ))}
+    </div>
+  );
+};
+```
+
+<Tip>
+  The StarRating component uses two state variables: `rating` for the actual value and `selection` for hover preview.
+</Tip>
+
+## Data Display Components
+
+### DataList Component
+
+Transform an array into an ordered or unordered list:
+
+```jsx
+const DataList = ({ isOrdered = false, data }) => {
+  const list = data.map((val, i) => <li key={`${i}_${val}`}>{val}</li>);
+  return isOrdered ? <ol>{list}</ol> : <ul>{list}</ul>;
+};
+
+// Usage
+const names = ['John', 'Paul', 'Mary'];
+
+ReactDOM.createRoot(document.getElementById('root')).render(
+  <>
+    <DataList data={names} />
+    <DataList data={names} isOrdered />
+  </>
+);
+```
+
+### DataTable Component
+
+Display array data in a table format:
+
+```jsx
+const DataTable = ({ data }) => {
+  return (
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Value</th>
+        </tr>
+      </thead>
+      <tbody>
+        {data.map((val, i) => (
+          <tr key={`${i}_${val}`}>
+            <td>{i}</td>
+            <td>{val}</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  );
+};
+```
+
+### MappedTable Component
+
+Create a dynamic table from an array of objects:
+
+```jsx
+const MappedTable = ({ data, propertyNames }) => {
+  let filteredData = data.map(v =>
+    Object.keys(v)
+      .filter(k => propertyNames.includes(k))
+      .reduce((acc, key) => ((acc[key] = v[key]), acc), {})
+  );
+  
+  return (
+    <table>
+      <thead>
+        <tr>
+          {propertyNames.map(val => (
+            <th key={`h_${val}`}>{val}</th>
+          ))}
+        </tr>
+      </thead>
+      <tbody>
+        {filteredData.map((val, i) => (
+          <tr key={`i_${i}`}>
+            {propertyNames.map(p => (
+              <td key={`i_${i}_${p}`}>{val[p]}</td>
+            ))}
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  );
+};
+
+// Usage
+const people = [
+  { name: 'John', surname: 'Smith', age: 42 },
+  { name: 'Adam', surname: 'Smith', gender: 'male' }
+];
+const propertyNames = ['name', 'surname', 'age'];
+
+ReactDOM.createRoot(document.getElementById('root')).render(
+  <MappedTable data={people} propertyNames={propertyNames} />
+);
+```
+
+<Warning>
+  The MappedTable component does not work with nested objects and will break if there are nested objects in the specified properties.
+</Warning>
+
+## Feedback Components
+
+### Tooltip Component
+
+Display contextual information on hover:
+
+```jsx
+const Tooltip = ({ children, text, ...rest }) => {
+  const [show, setShow] = React.useState(false);
+
+  return (
+    <div className="tooltip-container">
+      <div className={show ? 'tooltip-box visible' : 'tooltip-box'}>
+        {text}
+        <span className="tooltip-arrow" />
+      </div>
+      <div
+        onMouseEnter={() => setShow(true)}
+        onMouseLeave={() => setShow(false)}
+        {...rest}
+      >
+        {children}
+      </div>
+    </div>
+  );
+};
+```
+
+### Alert Component
+
+Show dismissible alerts with animations:
+
+```jsx
+const Alert = ({ isDefaultShown = false, timeout = 250, type, message }) => {
+  const [isShown, setIsShown] = React.useState(isDefaultShown);
+  const [isLeaving, setIsLeaving] = React.useState(false);
+
+  let timeoutId = null;
+
+  React.useEffect(() => {
+    setIsShown(true);
+    return () => {
+      clearTimeout(timeoutId);
+    };
+  }, [isDefaultShown, timeout, timeoutId]);
+
+  const closeAlert = () => {
+    setIsLeaving(true);
+    timeoutId = setTimeout(() => {
+      setIsLeaving(false);
+      setIsShown(false);
+    }, timeout);
+  };
+
+  return (
+    isShown && (
+      <div
+        className={`alert ${type} ${isLeaving ? 'leaving' : ''}`}
+        role="alert"
+      >
+        <button className="close" onClick={closeAlert} />
+        {message}
+      </div>
+    )
+  );
+};
+```
+
+### Modal Dialog Component
+
+Create accessible modal dialogs with keyboard support:
+
+```jsx
+const Modal = ({ isVisible = false, title, content, footer, onClose }) => {
+  const keydownHandler = ({ key }) => {
+    switch (key) {
+      case 'Escape':
+        onClose();
+        break;
+      default:
+    }
+  };
+
+  React.useEffect(() => {
+    document.addEventListener('keydown', keydownHandler);
+    return () => document.removeEventListener('keydown', keydownHandler);
+  });
+
+  return !isVisible ? null : (
+    <div className="modal" onClick={onClose}>
+      <div className="modal-dialog" onClick={e => e.stopPropagation()}>
+        <div className="modal-header">
+          <h3 className="modal-title">{title}</h3>
+          <span className="modal-close" onClick={onClose}>
+            &times;
+          </span>
+        </div>
+        <div className="modal-body">
+          <div className="modal-content">{content}</div>
+        </div>
+        {footer && <div className="modal-footer">{footer}</div>}
+      </div>
+    </div>
+  );
+};
+
+// Usage
+const App = () => {
+  const [isModal, setModal] = React.useState(false);
+  return (
+    <>
+      <button onClick={() => setModal(true)}>Click Here</button>
+      <Modal
+        isVisible={isModal}
+        title="Modal Title"
+        content={<p>Add your content here</p>}
+        footer={<button>Cancel</button>}
+        onClose={() => setModal(false)}
+      />
+    </>
+  );
+};
+```
+
+<Tip>
+  The Modal component handles ESC key presses and click-outside to close, providing a better user experience.
+</Tip>
+
+## Component Design Patterns
+
+<CardGroup cols={2}>
+  <Card title="Controlled Components" icon="sliders">
+    Use state to control component values, making them predictable and testable.
+  </Card>
+  
+  <Card title="Composition" icon="layer-group">
+    Build complex components by composing simpler ones, like Star and StarRating.
+  </Card>
+  
+  <Card title="Props Destructuring" icon="arrows-split-up-and-left">
+    Destructure props for cleaner code and use spread operators for flexibility.
+  </Card>
+  
+  <Card title="Accessibility" icon="universal-access">
+    Include ARIA attributes and keyboard support for better accessibility.
+  </Card>
+</CardGroup>
+
+## Best Practices
+
+<Steps>
+  <Step title="State Management">
+    Keep state as close as possible to where it's used. Lift state up only when necessary.
+  </Step>
+  
+  <Step title="Event Handlers">
+    Use cleanup functions to remove event listeners when components unmount.
+  </Step>
+  
+  <Step title="Key Props">
+    Always provide unique, stable key props when rendering lists of components.
+  </Step>
+  
+  <Step title="CSS Separation">
+    Keep CSS separate from component logic for better maintainability.
+  </Step>
+</Steps>
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="View Examples" icon="code" href="/react/components/examples">
+    See complete component implementations with styling
+  </Card>
+  
+  <Card title="Learn Testing" icon="vial" href="/react/testing/overview">
+    Discover how to test these components
+  </Card>
+</CardGroup>

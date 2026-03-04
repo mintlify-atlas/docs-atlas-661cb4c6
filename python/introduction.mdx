@@ -1,0 +1,66 @@
+---
+title: Python Code Snippets
+description: Explore a collection of Python helper functions and utilities for common programming tasks
+---
+
+# Python Code Snippets
+
+Welcome to the Python code snippets collection. This comprehensive library contains helper functions and utilities for Python 3.6+, covering the most common data types and operations.
+
+## What You'll Find
+
+Our Python collection includes utilities for:
+
+- **Lists**: Chunking, filtering, sorting, and manipulating list data
+- **Dictionaries**: Transforming, mapping, and converting dictionary structures
+- **Strings**: Case conversion, formatting, and text manipulation
+- **Math**: Mathematical operations, algorithms, and calculations
+- **Dates**: Date arithmetic, formatting, and comparisons
+
+## Code Quality
+
+All snippets are:
+
+- Written for Python 3.6+
+- Tested and production-ready
+- Focused on readability and performance
+- Accompanied by practical examples
+
+## Getting Started
+
+Browse the sections below to find the utilities you need:
+
+<CardGroup cols={2}>
+  <Card title="Lists" icon="list" href="/python/lists/overview">
+    Work with list operations, filtering, and transformations
+  </Card>
+  <Card title="Dictionaries" icon="book" href="/python/dictionaries/overview">
+    Transform and manipulate dictionary data structures
+  </Card>
+  <Card title="Strings" icon="text" href="/python/strings/overview">
+    String manipulation, formatting, and case conversion
+  </Card>
+  <Card title="Math" icon="calculator" href="/python/math/overview">
+    Mathematical operations and algorithms
+  </Card>
+  <Card title="Dates" icon="calendar" href="/python/dates/overview">
+    Date arithmetic and formatting utilities
+  </Card>
+</CardGroup>
+
+## Example Snippet
+
+Here's a quick example of what you'll find in this collection:
+
+```python
+from math import ceil
+
+def chunk(lst, size):
+  return list(
+    map(lambda x: lst[x * size:x * size + size],
+      list(range(ceil(len(lst) / size)))))
+
+chunk([1, 2, 3, 4, 5], 2) # [[1, 2], [3, 4], [5]]
+```
+
+This function splits a list into smaller chunks of a specified size - just one of many utilities you'll discover in this collection.

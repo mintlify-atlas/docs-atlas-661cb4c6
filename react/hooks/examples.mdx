@@ -1,0 +1,483 @@
+---
+title: React Hooks Examples
+description: Complete examples of custom React hooks with usage demos
+---
+
+This page provides complete, working examples of custom React hooks from the 30 Seconds of Code collection. Each example includes the hook implementation and a practical usage demo.
+
+## Timing Hooks
+
+### useInterval - Declarative Intervals
+
+Wrapping `setInterval()` in a React hook requires careful handling of closures and cleanup. Here's a complete implementation:
+
+<Tabs>
+  <Tab title="Hook Implementation">
+    ```jsx
+    const useInterval = (callback, delay) => {
+      const savedCallback = React.useRef();
+
+      React.useEffect(() => {
+        savedCallback.current = callback;
+      }, [callback]);
+
+      React.useEffect(() => {
+        const tick = () => {
+          savedCallback.current();
+        }
+        if (delay !== null) {
+          let id = setInterval(tick, delay);
+          return () => clearInterval(id);
+        }
+      }, [delay]);
+    };
+    ```
+  </Tab>
+  
+  <Tab title="Usage Example">
+    ```jsx
+    const Timer = props => {
+      const [seconds, setSeconds] = React.useState(0);
+      
+      useInterval(() => {
+        setSeconds(seconds + 1);
+      }, 1000);
+
+      return <p>{seconds}</p>;
+    };
+
+    ReactDOM.createRoot(document.getElementById('root')).render(
+      <Timer />
+    );
+    ```
+  </Tab>
+  
+  <Tab title="How It Works">
+    The hook solves three key problems:
+    
+    1. **Fresh Closures**: Uses `useRef` to ensure the interval always has access to the latest callback
+    2. **Cleanup**: Returns a cleanup function to clear the interval on unmount
+    3. **Dynamic Delay**: Recreates the interval when delay changes, or clears it if delay is null
+    
+    The wrapper function `tick()` calls `savedCallback.current()`, which always points to the latest callback.
+  </Tab>
+</Tabs>
+
+### useTimeout - Declarative Timeouts
+
+Similar to `useInterval`, but for one-time delayed execution:
+
+```jsx
+const useTimeout = (callback, delay) => {
+  const savedCallback = React.useRef();
+
+  React.useEffect(() => {
+    savedCallback.current = callback;
+  }, [callback]);
+
+  React.useEffect(() => {
+    const tick = () => {
+      savedCallback.current();
+    }
+    if (delay !== null) {
+      let id = setTimeout(tick, delay);
+      return () => clearTimeout(id);
+    }
+  }, [delay]);
+};
+
+// Usage
+const OneSecondTimer = props => {
+  const [seconds, setSeconds] = React.useState(0);
+  
+  useTimeout(() => {
+    setSeconds(seconds + 1);
+  }, 1000);
+
+  return <p>{seconds}</p>;
+};
+```
+
+<Note>
+  The implementation is nearly identical to `useInterval`, with the key difference being `setTimeout` vs `setInterval`.
+</Note>
+
+### useEffectOnce - Conditional One-Time Effects
+
+Run a callback at most once when a condition becomes true:
+
+```jsx
+const useEffectOnce = (callback, when) => {
+  const hasRunOnce = React.useRef(false);
+
+  React.useEffect(() => {
+    if (when && !hasRunOnce.current) {
+      callback();
+      hasRunOnce.current = true;
+    }
+  }, [when]);
+};
+
+// Usage
+const App = () => {
+  const [clicked, setClicked] = React.useState(false);
+  
+  useEffectOnce(() => {
+    console.log('mounted');
+  }, clicked);
+  
+  return <button onClick={() => setClicked(true)}>Click me</button>;
+};
+```
+
+## Network Hooks
+
+### useFetch - Declarative Data Fetching
+
+Fetch data with proper state management and abort controller support:
+
+<Tabs>
+  <Tab title="Complete Implementation">
+    ```jsx
+    const useFetch = (url, options) => {
+      const [response, setResponse] = React.useState(null);
+      const [error, setError] = React.useState(null);
+      const [abort, setAbort] = React.useState(() => {});
+
+      React.useEffect(() => {
+        const fetchData = async () => {
+          try {
+            const abortController = new AbortController();
+            const signal = abortController.signal;
+            setAbort(abortController.abort);
+            const res = await fetch(url, {...options, signal});
+            const json = await res.json();
+            setResponse(json);
+          } catch (error) {
+            setError(error);
+          }
+        };
+        fetchData();
+        return () => {
+          abort();
+        }
+      }, []);
+
+      return { response, error, abort };
+    };
+    ```
+  </Tab>
+  
+  <Tab title="Usage Example">
+    ```jsx
+    const ImageFetch = props => {
+      const res = useFetch('https://dog.ceo/api/breeds/image/random', {});
+      
+      if (!res.response) {
+        return <div>Loading...</div>;
+      }
+      
+      const imageUrl = res.response.message;
+      return (
+        <div>
+          <img src={imageUrl} alt="avatar" width={400} height="auto" />
+        </div>
+      );
+    };
+
+    ReactDOM.createRoot(document.getElementById('root')).render(
+      <ImageFetch />
+    );
+    ```
+  </Tab>
+  
+  <Tab title="State Management">
+    The hook manages three pieces of state:
+    
+    - **response**: The successful response data (null while loading)
+    - **error**: Any error that occurred during fetch
+    - **abort**: Function to cancel the request
+    
+    You can render different components based on these states:
+    
+    ```jsx
+    if (!res.response && !res.error) return <div>Loading...</div>;
+    if (res.error) return <div>Error: {res.error.message}</div>;
+    return <div>{/* render data */}</div>;
+    ```
+  </Tab>
+</Tabs>
+
+## Event Hooks
+
+### useClickOutside - Outside Click Detection
+
+Detect clicks outside an element - essential for dropdowns, modals, and popovers:
+
+```jsx
+const useClickOutside = (ref, callback) => {
+  const handleClick = e => {
+    if (ref.current && !ref.current.contains(e.target)) {
+      callback();
+    }
+  };
+  
+  React.useEffect(() => {
+    document.addEventListener('click', handleClick);
+    return () => {
+      document.removeEventListener('click', handleClick);
+    };
+  });
+};
+
+// Usage
+const ClickBox = ({ onClickOutside }) => {
+  const clickRef = React.useRef();
+  useClickOutside(clickRef, onClickOutside);
+
+  return (
+    <div
+      className="click-box"
+      ref={clickRef}
+      style={{
+        border: '2px dashed orangered',
+        height: 200,
+        width: 400,
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center'
+      }}
+    >
+      <p>Click out of this element</p>
+    </div>
+  );
+};
+
+ReactDOM.createRoot(document.getElementById('root')).render(
+  <ClickBox onClickOutside={() => alert('click outside')} />
+);
+```
+
+### useClickInside - Inside Click Detection
+
+Complement to `useClickOutside` for detecting clicks within an element:
+
+```jsx
+const useClickInside = (ref, callback) => {
+  const handleClick = e => {
+    if (ref.current && ref.current.contains(e.target)) {
+      callback();
+    }
+  };
+  
+  React.useEffect(() => {
+    document.addEventListener('click', handleClick);
+    return () => {
+      document.removeEventListener('click', handleClick);
+    };
+  });
+};
+
+// Usage
+const ClickBox = ({ onClickInside }) => {
+  const clickRef = React.useRef();
+  useClickInside(clickRef, onClickInside);
+  
+  return (
+    <div
+      className="click-box"
+      ref={clickRef}
+      style={{
+        border: '2px dashed orangered',
+        height: 200,
+        width: 400,
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center'
+      }}
+    >
+      <p>Click inside this element</p>
+    </div>
+  );
+};
+```
+
+<Tip>
+  Use `useClickInside` when you need to handle clicks on multiple children without adding individual `onClick` handlers to each.
+</Tip>
+
+## Observer Hooks
+
+### useMutationObserver - DOM Change Detection
+
+Watch for changes in the DOM tree using the MutationObserver API:
+
+```jsx
+const useMutationObserver = (
+  ref,
+  callback,
+  options = {
+    attributes: true,
+    characterData: true,
+    childList: true,
+    subtree: true,
+  }
+) => {
+  React.useEffect(() => {
+    if (ref.current) {
+      const observer = new MutationObserver(callback);
+      observer.observe(ref.current, options);
+      return () => observer.disconnect();
+    }
+  }, [callback, options]);
+};
+
+// Usage
+const App = () => {
+  const mutationRef = React.useRef();
+  const [mutationCount, setMutationCount] = React.useState(0);
+  
+  const incrementMutationCount = () => {
+    return setMutationCount(mutationCount + 1);
+  };
+  
+  useMutationObserver(mutationRef, incrementMutationCount);
+  const [content, setContent] = React.useState('Hello world');
+
+  return (
+    <>
+      <label htmlFor="content-input">Edit this to update the text:</label>
+      <textarea
+        id="content-input"
+        style={{ width: '100%' }}
+        value={content}
+        onChange={e => setContent(e.target.value)}
+      />
+      <div style={{ width: '100%' }} ref={mutationRef}>
+        <div
+          style={{
+            resize: 'both',
+            overflow: 'auto',
+            maxWidth: '100%',
+            border: '1px solid black',
+          }}
+        >
+          <h2>Resize or change the content:</h2>
+          <p>{content}</p>
+        </div>
+      </div>
+      <div>
+        <h3>Mutation count {mutationCount}</h3>
+      </div>
+    </>
+  );
+};
+```
+
+## Lifecycle Hooks
+
+### Replicate Class Component Lifecycle
+
+If you're transitioning from class components, these hooks replicate lifecycle methods:
+
+<Tabs>
+  <Tab title="componentDidMount">
+    ```jsx
+    const useComponentDidMount = onMountHandler => {
+      React.useEffect(() => {
+        onMountHandler();
+      }, []);
+    };
+
+    // Usage
+    const Mounter = () => {
+      useComponentDidMount(() => console.log('Component did mount'));
+      return <div>Check the console!</div>;
+    };
+    ```
+  </Tab>
+  
+  <Tab title="componentDidUpdate">
+    ```jsx
+    const useComponentDidUpdate = (callback, condition) => {
+      const mounted = React.useRef(false);
+      
+      React.useEffect(() => {
+        if (mounted.current) callback();
+        else mounted.current = true;
+      }, condition);
+    };
+
+    // Usage
+    const App = () => {
+      const [value, setValue] = React.useState(0);
+      const [otherValue, setOtherValue] = React.useState(1);
+
+      useComponentDidUpdate(() => {
+        console.log(`Current value is ${value}.`);
+      }, [value]);
+
+      return (
+        <>
+          <p>Value: {value}, other value: {otherValue}</p>
+          <button onClick={() => setValue(value + 1)}>Increment value</button>
+          <button onClick={() => setOtherValue(otherValue + 1)}>
+            Increment other value
+          </button>
+        </>
+      );
+    };
+    ```
+  </Tab>
+  
+  <Tab title="componentWillUnmount">
+    ```jsx
+    const useComponentWillUnmount = onUnmountHandler => {
+      React.useEffect(
+        () => () => {
+          onUnmountHandler();
+        },
+        []
+      );
+    };
+
+    // Usage
+    const Unmounter = () => {
+      useComponentWillUnmount(() => console.log('Component will unmount'));
+      return <div>Check the console!</div>;
+    };
+    ```
+  </Tab>
+</Tabs>
+
+## Key Patterns
+
+<CardGroup cols={2}>
+  <Card title="useRef for Mutable Values" icon="box">
+    Use `useRef` when you need values that persist across renders but don't trigger re-renders when changed.
+  </Card>
+  
+  <Card title="Cleanup Functions" icon="broom">
+    Always return cleanup functions from effects that add event listeners or create subscriptions.
+  </Card>
+  
+  <Card title="Dependency Arrays" icon="list-check">
+    Include all values from component scope that are used in the effect to avoid stale closures.
+  </Card>
+  
+  <Card title="Abort Controllers" icon="stop">
+    Use AbortController for network requests to prevent memory leaks and race conditions.
+  </Card>
+</CardGroup>
+
+## Next Steps
+
+<Steps>
+  <Step title="Learn Components">
+    See how these hooks are used in [React Components](/react/components/overview).
+  </Step>
+  
+  <Step title="Testing Hooks">
+    Learn how to test custom hooks in the [Testing Guide](/react/testing/overview).
+  </Step>
+</Steps>

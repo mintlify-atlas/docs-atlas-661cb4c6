@@ -1,0 +1,248 @@
+---
+title: Git Branches
+description: Master Git branch operations including creation, switching, merging, and deletion
+---
+
+# Git Branches
+
+Git branches are used to develop features, fix bugs, and experiment with new ideas. They allow you to split up development work and manage different lines of development in parallel.
+
+## Creating Branches
+
+Creating a new branch is simple and allows you to work on features in isolation.
+
+### Create a New Branch
+
+Use `git checkout -b <branch>` to create a new branch with the specified name and switch to it:
+
+```bash
+# Syntax: git checkout -b <branch> [-t <remote>/<branch>]
+
+git checkout -b patch-1
+# Local branch, without a remote tracking branch
+
+git checkout -b patch-2 -t origin/patch-2
+# Local branch and remote tracking branch with the same name
+```
+
+Alternatively, you can use `git branch <branch>` and then `git checkout <branch>` separately.
+
+### Create an Empty Branch
+
+If you want to create an empty branch without any history, use `git checkout --orphan <branch>`:
+
+```bash
+# Syntax: git checkout --orphan <branch>
+
+git checkout --orphan gh-pages
+# Creates a new branch named `gh-pages` with no commit history
+```
+
+This is useful for setting up branches with entirely different content or history from your main branch.
+
+## Switching Branches
+
+You can easily switch between branches using `git checkout` or the newer `git switch` command.
+
+### Switch to an Existing Branch
+
+```bash
+# Syntax: git checkout <branch>
+#     or: git switch <branch>
+
+git checkout patch-1
+# Switches to the branch named `patch-1`
+
+git switch patch-1
+# Switches to the branch named `patch-1`
+```
+
+### Switch to the Previous Branch
+
+Use `-` as a shorthand for the previous branch:
+
+```bash
+# Syntax: git checkout -
+#     or: git switch -
+
+git checkout patch-1
+git checkout master
+git checkout -
+# Switches back to `patch-1`
+
+git switch patch-1
+git switch master
+git switch -
+# Switches back to `patch-1`
+```
+
+## Viewing Branches
+
+List all branches in your repository:
+
+```bash
+# List local branches
+git branch
+
+# List all branches (local and remote)
+git branch -a
+
+# List remote branches
+git branch -r
+```
+
+## Merging Branches
+
+At some point, you'll want to merge a branch into another branch, usually `master` or `main`.
+
+### Basic Merge
+
+Switch to the target branch first, then merge the source branch:
+
+```bash
+# Syntax:
+#  git checkout <target-branch>
+#  git merge <source-branch>
+
+git checkout master
+git merge patch-1
+# Merges the `patch-1` branch into `master`
+```
+
+By default, Git will use fast-forward merge to create a linear history.
+
+### Creating a Merge Commit
+
+If you want to create a merge commit, use the `--no-ff` flag:
+
+```bash
+# Syntax:
+#  git checkout <target-branch>
+#  git merge --no-ff -m <message> <source-branch>
+
+git checkout master
+git merge --no-ff -m "Merge patch-1" patch-1
+# Merges the `patch-1` branch into `master` and creates a commit
+# with the message "Merge patch-1"
+```
+
+## Deleting Branches
+
+As your project progresses, you may accumulate branches that are no longer needed. Deleting these branches keeps your repository clean and organized.
+
+### Delete Local Branch
+
+Use `git branch -d <branch>` to delete a local branch:
+
+```bash
+# Usage: git branch -d <branch>
+
+git checkout master
+git branch -d patch-1
+# Deletes the `patch-1` local branch
+```
+
+Note that you need to switch to a different branch before deleting the target branch.
+
+### Delete Remote Branch
+
+Use `git push -d <remote> <branch>` to delete a remote branch:
+
+```bash
+# Usage: git push -d <remote> <branch>
+
+git checkout master
+git push -d origin patch-1
+# Deletes the `patch-1` remote branch
+```
+
+### Delete Detached Branches
+
+Detached branches are branches that are not associated with any commit. Use `git fetch --all --prune` to garbage collect them:
+
+```bash
+# Usage: git fetch --all --prune
+
+git checkout master
+git branch
+# master
+# patch-1
+# patch-2
+
+# Assuming `patch-1` is detached
+git fetch --all --prune
+
+git branch
+# master
+# patch-2
+```
+
+This is especially useful if the remote repository is set to automatically delete merged branches.
+
+### Delete Merged Branches
+
+You can delete all branches that have been merged into a target branch:
+
+```bash
+# Usage:
+#  git branch --merged <branch> | grep -v "(^\*|<branch>)" | xargs git branch -d
+
+git checkout master
+git branch
+# master
+# patch-1
+# patch-2
+
+# Assuming `patch-1` is merged into master
+git branch --merged master | grep -v "(^\*|master)" | xargs git branch -d
+
+git branch
+# master
+# patch-2
+```
+
+## Branch Workflows
+
+### Feature Branch Workflow
+
+```bash
+# Create feature branch
+git checkout -b feature/user-auth
+
+# Make changes and commit
+git add .
+git commit -m "Add user authentication"
+
+# Merge back to main
+git checkout main
+git merge --no-ff feature/user-auth
+
+# Delete feature branch
+git branch -d feature/user-auth
+```
+
+### Bugfix Workflow
+
+```bash
+# Create bugfix branch from main
+git checkout main
+git checkout -b bugfix/login-error
+
+# Fix the bug and commit
+git add .
+git commit -m "Fix login error"
+
+# Merge and delete
+git checkout main
+git merge bugfix/login-error
+git branch -d bugfix/login-error
+```
+
+## Best Practices
+
+- Use descriptive branch names (e.g., `feature/user-auth`, `bugfix/login-error`)
+- Keep branches focused on a single feature or fix
+- Regularly merge or rebase with the main branch to avoid conflicts
+- Delete branches after they've been merged
+- Use merge commits (`--no-ff`) for feature branches to preserve history
+- Create branches from an up-to-date main branch

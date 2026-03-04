@@ -1,0 +1,284 @@
+---
+title: CSS Animations
+description: Create engaging animations and interactive effects using modern CSS techniques.
+---
+
+# CSS Animations
+
+CSS animations bring interfaces to life by adding motion, transitions, and interactive effects. This section covers techniques for creating performant, engaging animations without JavaScript.
+
+## Core Animation Concepts
+
+### Transitions
+
+Transitions animate changes to CSS properties over time. They're perfect for hover states, focus effects, and simple property changes.
+
+**Basic syntax:**
+```css
+.element {
+  transition: property duration timing-function delay;
+}
+```
+
+**Example:**
+```css
+.button {
+  background: #fff;
+  transition: background 0.3s ease;
+}
+
+.button:hover {
+  background: #000;
+}
+```
+
+The background color transitions smoothly from white to black over 0.3 seconds.
+
+### Keyframe Animations
+
+Keyframe animations provide fine-grained control over animation sequences using `@keyframes`.
+
+**Basic syntax:**
+```css
+@keyframes animation-name {
+  0% { /* Starting state */ }
+  50% { /* Midpoint state */ }
+  100% { /* Ending state */ }
+}
+
+.element {
+  animation: animation-name duration timing-function delay iteration-count;
+}
+```
+
+### Transforms
+
+Transforms modify element position, scale, rotation, and skew without affecting document flow. They're GPU-accelerated, making them performant for animations.
+
+**Transform functions:**
+- `translate()` - Move elements
+- `scale()` - Resize elements
+- `rotate()` - Rotate elements
+- `skew()` - Slant elements
+
+```css
+.element {
+  transform: translateX(100px) scale(1.2) rotate(45deg);
+}
+```
+
+## Timing Functions
+
+Timing functions control animation pacing:
+
+- `linear` - Constant speed
+- `ease` - Slow start, fast middle, slow end (default)
+- `ease-in` - Slow start, fast end
+- `ease-out` - Fast start, slow end
+- `ease-in-out` - Slow start and end
+- `cubic-bezier(n,n,n,n)` - Custom curve
+- `steps(n)` - Discrete steps (for sprite animations)
+
+## Animation Properties
+
+### animation-duration
+How long the animation takes:
+```css
+animation-duration: 2s; /* 2 seconds */
+animation-duration: 500ms; /* 500 milliseconds */
+```
+
+### animation-delay
+Wait time before animation starts:
+```css
+animation-delay: 1s; /* Wait 1 second */
+```
+
+### animation-iteration-count
+How many times to repeat:
+```css
+animation-iteration-count: 3; /* Run 3 times */
+animation-iteration-count: infinite; /* Loop forever */
+```
+
+### animation-direction
+Playback direction:
+```css
+animation-direction: normal; /* normal | reverse | alternate | alternate-reverse */
+```
+
+### animation-fill-mode
+Element state before/after animation:
+```css
+animation-fill-mode: forwards; /* none | forwards | backwards | both */
+```
+
+## Common Animation Patterns
+
+### Hover Effects
+
+Enhancing interactivity with hover animations:
+
+```css
+.card {
+  transition: transform 0.3s ease;
+}
+
+.card:hover {
+  transform: translateY(-4px);
+}
+```
+
+The card lifts slightly on hover, creating a floating effect.
+
+### Loading Animations
+
+Spinners and progress indicators:
+
+```css
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.loader {
+  animation: spin 1s linear infinite;
+}
+```
+
+### Entrance Animations
+
+Elements appearing with motion:
+
+```css
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.element {
+  animation: fadeInUp 0.5s ease-out;
+}
+```
+
+## Performance Optimization
+
+### GPU Acceleration
+
+Certain properties trigger GPU acceleration for smoother animations:
+
+**Optimized properties:**
+- `transform` (all functions)
+- `opacity`
+- `filter`
+
+**Avoid animating:**
+- `width`, `height` (causes reflow)
+- `top`, `left`, `right`, `bottom` (use `transform` instead)
+- `margin`, `padding` (causes reflow)
+
+### will-change Property
+
+Hint to browsers about upcoming changes:
+
+```css
+.animated-element {
+  will-change: transform, opacity;
+}
+```
+
+**Use sparingly** - overuse can harm performance.
+
+### Reduce Motion
+
+Respect user preferences for reduced motion:
+
+```css
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+```
+
+## Advanced Techniques
+
+### CSS Variables in Animations
+
+Dynamic animations using custom properties:
+
+```css
+.element {
+  --rotation: 0deg;
+  transform: rotate(var(--rotation));
+  transition: transform 0.3s;
+}
+```
+
+JavaScript can update `--rotation` for dynamic control.
+
+### Staggered Animations
+
+Delay animations for multiple elements:
+
+```css
+.item:nth-child(1) { animation-delay: 0s; }
+.item:nth-child(2) { animation-delay: 0.1s; }
+.item:nth-child(3) { animation-delay: 0.2s; }
+```
+
+### Animation Composition
+
+Combine multiple animations:
+
+```css
+.element {
+  animation: 
+    slideIn 0.5s ease-out,
+    fadeIn 0.5s ease-out,
+    pulse 1s ease-in-out 0.5s infinite;
+}
+```
+
+## Accessibility Considerations
+
+1. **Respect prefers-reduced-motion** - Essential for users with vestibular disorders
+2. **Avoid flashing content** - Can trigger seizures (stay under 3 flashes per second)
+3. **Ensure content remains readable** - Don't sacrifice usability for effects
+4. **Provide alternatives** - Allow disabling animations
+5. **Test with screen readers** - Ensure animations don't confuse assistive technology
+
+## Browser Support
+
+CSS animations have excellent browser support:
+
+- **Transitions**: Universal support in all modern browsers
+- **Keyframe animations**: Universal support in all modern browsers
+- **Transforms**: Universal support in all modern browsers
+- **will-change**: Good modern browser support
+- **prefers-reduced-motion**: Good modern browser support
+
+## Best Practices
+
+1. **Keep animations subtle** - Enhance, don't distract
+2. **Use appropriate durations** - 200-500ms for most UI animations
+3. **Choose the right timing function** - `ease-out` for entrances, `ease-in` for exits
+4. **Animate transform and opacity** - Most performant properties
+5. **Test on lower-end devices** - Ensure smooth performance
+6. **Provide visual feedback** - Confirm user actions
+7. **Be consistent** - Use similar timing and easing throughout your site
+8. **Consider context** - Different animations for different actions
+
+## Next Steps
+
+Explore:
+- [Hover Effects](/css/animation/hover-effects) - Interactive hover animations
+- More animation examples in the full collection
